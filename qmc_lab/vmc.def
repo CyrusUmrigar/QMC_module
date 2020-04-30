@@ -1,0 +1,590 @@
+\definecolor{darkred}{rgb}{0.8,0,0} % The smaller the number the darker it is
+\definecolor{darkgreen}{rgb}{0,0.65,0}
+\definecolor{ddarkgreen}{rgb}{0,1.0,0}
+\definecolor{darkblue}{rgb}{0,0,0.6}
+\definecolor{babyblue}{rgb}{0.54,0.81,0.94}
+\definecolor{violet}{rgb}{1.0,0,1.0}
+
+%\definecolor{green}{rgb}{0,.5,0}
+%\definecolor{red}{rgb}{.85,0,0}
+%\definecolor{blue}{rgb}{0,0,.85}
+\definecolor{azzure}{rgb}{0.1,0.5,.65}
+\definecolor{orange}{rgb}{.85,0.3,0}
+
+\def\beq{\begin{eqnarray}}
+\def\eeq{\end{eqnarray}}
+\def\beqq{\begin{eqnarray*} \color{blue} }
+\def\eeqq{\end{eqnarray*}}
+%\def\beqb{\textcolor{blue}\{{\begin{eqnarray*}}}}
+%\def\eeqb{\end{eqnarray*}}
+
+\def\approxpropto{\stackrel{\propto}{\sim}}
+
+\newcommand{\avg} [2]{\left\langle #1 \right\rangle_{#2}}
+\newcommand{\T}{\ensuremath{\text{T}}}
+\renewcommand{\b}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+%\newcommand{\bra}[1]{\ensuremath{\langle #1 \vert}}
+%\newcommand{\ket}[1]{\ensuremath{\vert #1  \rangle}}
+%\newcommand{\braket}[2]{\ensuremath{\langle  #1 \vert #2  \rangle}}
+
+\def\bra#1{\langle #1 \vert}
+\def\ket#1{\vert #1 \rangle}
+\def\braket#1#2{\left\langle #1 \vert #2 \right\rangle}
+\def\braketbig#1#2{\Big\langle #1 \; \Big\vert \; #2 \Big\rangle}
+\def\ketbra#1#2{\vert #1 \rangle \langle #2 \vert}
+\def\brakett#1#2#3{\langle #1 \vert #2 \vert #3 \rangle}
+%\def\Braket#1#2{\langle #1 \vert #2 \rangle}
+\def\Braket#1#2{\left\langle\left. #1 \right\vert #2 \right\rangle}
+\def\Brakett#1#2#3{\langle #1 \vert #2 \vert #3 \rangle}
+
+\makeatletter
+\newcommand{\myunderbrace}{}
+\def\myunderbrace#1{%
+  \@ifnextchar_%
+    {\@myunderbrace{#1}}
+    {\@latex@warning{Missing argument for \string\myunderbrace}\@myunderbrace{#1}_{}}%
+}
+\def\@myunderbrace#1_#2{%
+    \colorlet{currentcolor}{.}%
+    \color{darkgreen}%
+    \underbrace{\color{currentcolor}#1}_{\color{darkgreen}#2}%
+    \color{currentcolor}%
+}
+\makeatother
+
+\def\psiijRk{\psi_{ij}(\Rveck)}
+\def\psiRn{\psi(\Rvecn)}
+\def\psiiRn{\psi_{i}(\Rvecn)}
+\def\psijRn{\psi_{j}(\Rvecn)}
+\def\Rvecn{{\bf R}_n}
+\def\psiiRn{\psi_{i}(\Rvecn)}
+\def\psijRn{\psi_{j}(\Rvecn)}
+\def\psiijRn{\psi_{ij}(\Rvecn)}
+\def\Psii{\Psi_{i}}
+\def\Psij{\Psi_{j}}
+\def\Psik{\Psi_{k}}
+\def\Psiij{\Psi_{ij}}
+\def\PsiTi{\Psi_{T,i}}
+\def\Psibar{{\bar{\Psi}}}
+\def\Psiibar{\Psibar_i}
+\def\Psijbar{\Psibar_j}
+%\def\Psijbar{{\bar{\Psij}}}
+\def\Psisq{\Psi^2}
+\def\Psisqex{\langle \Psi^2 \rangle}
+\def\PsiR{\Psi({\bf R})}
+\def\PsiRp{\Psi({\bf R'})}
+\def\PsiRpp{\Psi({\bf R''})}
+\def\PsiRk{\Psi({\bf R}_k)}
+\def\psijRn{\psi_{j}(\Rvecn)}
+\def\Psirp{\Psi(\rvecp)}
+
+\def\psiTRip{\psi_{\rm T}(\Rvecip)}
+\def\psiTRi{\Psi_{\rm T}(\Rveci)}
+\def\psiTsR{\Psi_{\rm T}^*(\Rvec)}
+\def\psiTzRi{\Psi_{\rm T}^0(\Rveci)}
+\def\psiTzR{\Psi_{\rm T}^0(\Rvec)}
+\def\psiTRf{\Psi_{\rm T}(\Rvec_{\rm f})}
+\def\psiTR{\psi_{\rm T}(\Rvec)}
+\def\psiT{\Psi_{\rm T}}
+\def\psiTz{\Psi_{\rm T}^0}
+\def\psiz{\Psi_0}
+\def\psiTsq{\vert \psiT \vert^2}
+\def\psiTsqR{\vert \psiT(\Rvec) \vert^2}
+\def\PsiT{\Psi_{\rm T}}
+\def\PsiTR{\Psi_{\rm T}(\Rvec)}
+\def\PsiTRp{\Psi_{\rm T}(\Rvecp)}
+\def\PsiTRpp{\Psi_{\rm T}(\Rvecpp)}
+\def\PsiTRk{\Psi_{\rm T}(\Rveck)}
+
+\def\psiGRip{\psi_{\rm G}(\Rvecip)}
+\def\psiGRi{\Psi_{\rm G}(\Rveci)}
+\def\psiGsR{\Psi_{\rm G}^*(\Rvec)}
+\def\psiGzRi{\Psi_{\rm G}^0(\Rveci)}
+\def\psiGzR{\Psi_{\rm G}^0(\Rvec)}
+\def\psiGRf{\Psi_{\rm G}(\Rvec_{\rm f})}
+\def\psiGR{\psi_{\rm G}(\Rvec)}
+\def\psiG{\Psi_{\rm G}}
+\def\psiGz{\Psi_{\rm G}^0}
+\def\psiz{\Psi_0}
+\def\psiGsq{\vert \psiG \vert^2}
+\def\psiGsqR{\vert \psiG(\Rvec) \vert^2}
+\def\PsiG{\Psi_{\rm G}}
+\def\PsiGR{\Psi_{\rm G}(\Rvec)}
+\def\PsiGRp{\Psi_{\rm G}(\Rvecp)}
+\def\PsiGRpp{\Psi_{\rm G}(\Rvecpp)}
+\def\PsiGRk{\Psi_{\rm G}(\Rveck)}
+
+\def\PsiFNR{\Psi_{\rm FN}(\Rvec)}
+\def\PsiFNRk{\Psi_{\rm FN}(\Rveck)}
+\def\Psiz{\Psi_0}
+\def\PsizR{\Psi_0(\Rvec)}
+\def\Psizsq{{\vert \Psi_0 \vert^2}}
+\def\abspsiT{{\vert \Psi_T \vert}}
+
+\def\psii{\psi_{i}}
+\def\psij{\psi_{j}}
+\def\psiij{\psi_{ij}}
+\def\psisq{\psi^2}
+\def\psisqex{\langle \psi^2 \rangle}
+\def\psiR{\psi({\bf R})}
+\def\psiRk{\psi({\bf R}_k)}
+\def\psiiRk{\psi_{i}(\Rveck)}
+\def\psijRk{\psi_{j}(\Rveck)}
+\def\psiijRk{\psi_{ij}(\Rveck)}
+\def\Psii{\Psi_{i}}
+\def\Psij{\Psi_{j}}
+\def\Psiij{\Psi_{ij}}
+\def\PsiiR{\Psi_{i}(\Rvec)}
+\def\PsijR{\Psi_{j}(\Rvec)}
+\def\Psibar{{\bar{\Psi}}}
+\def\Psiibar{\Psibar_i}
+\def\Psijbar{\Psibar_j}
+%\def\Psijbar{{\bar{\Psij}}}
+\def\Psisq{\Psi^2}
+\def\PsiTsq{\Psi_{\rm T}^2}
+\def\PsiGsq{\Psi_{\rm G}^2}
+\def\Psisqex{\langle \Psi^2 \rangle}
+\def\PsiR{\Psi({\bf R})}
+\def\PsiRk{\Psi({\bf R}_k)}
+\def\PsiiRk{\Psi_{i}(\Rveck)}
+\def\PsijRk{\Psi_{j}(\Rveck)}
+\def\PsiijRk{\Psi_{ij}(\Rveck)}
+\def\Psio{\Psi^{(0)}}
+\def\Psil{\Psi^{(1)}}
+\def\Psib{\overline{\Psi}}
+\def\Psilin{\Psi_{\rm lin}}
+\def\Psiorthog{\Psi_{\rm orthog}}
+
+\def\psisq{\psi^2}
+\def\psisqR{\psi^2(\Rvec)}
+\def\psiTsqR{\psiT^2(\Rvec)}
+
+\def\psiabssq{\vert \psi \vert^2}
+\def\psiabssqR{\vert \psi(\Rvec) \vert^2}
+\def\psiTabssqR{\vert \psiT(\Rvec) \vert^2}
+
+\def\cf{{\it cf.}}
+\def\eg{{\it e.g.}}
+\def\etal{{\it et~al.}}
+\def\ibid{\it ibid., \rm}
+\def\etc{{\it etc.}}
+\def\ie{{\it i.e.}}
+\def\viz{{\it viz.}}
+
+\def\fav{\langle f \rangle_\rho}
+\def\gav{\langle g \rangle_\rho}
+\def\fbar{\overline{f_\rho}}
+\def\gbar{\overline{g_\rho}}
+
+\def\vecs#1{{\vec #1 \,}}
+\def\Bvec{{\bf B}}
+\def\Evec{{\bf E}}
+\def\Hvec{{\bf H}}
+\def\hvec{{\bf h}}
+\def\Svec{{\bf S}}
+\def\Hbar{{\bar{H}}}
+\def\Sbar{{\bar{S}}}
+\def\Hvecbar{{\overline{\bf H}}}
+\def\Svecbar{{\overline{\bf S}}}
+\def\gvec{{\bf g}}
+\def\pvec{{\bf p}}
+\def\qvec{{\bf q}}
+\def\cvec{{\bf c}}
+\def\alphavec{\bm{\alpha}}
+\def\lambdavec{\bm{\lambda}}
+%\def\Rvec{\vecs R}
+\def\Rvec{{\bf R}}
+%\def\Rvecp{{\bf R}\prime}
+\def\Rvecp{{\bf R}'}
+\def\rvec{{\bf r}}
+\def\Rvecip{\Rveci;\{p\}}
+\def\Rveci{\Rvec_i}
+%\def\Rveci{{\bf r}_{1i},{\bf r}_{2i},...,{\bf r}_{ni}}
+%\def\Rvec{{\bf r}_{1},{\bf r}_{2},...,{\bf r}_{n}}
+\def\dRvec{d^{3n} {\bf r}}
+
+\def\Rj{{\bf R}_j}
+\def\Rk{{\bf R}_k}
+\def\Rm{{\bf R}_m}
+\def\Rn{{\bf R}_n}
+
+\def\intdR{\int \! \dRvec \;}
+
+\def\pb{\overline{p}}
+\def\pbar{{\bar{p}}}
+\def\pbarvec{{\bar{\bf p}}}
+\def\pibar{\bar{p}_i}
+
+\def\Vertl{\left\vert}
+\def\Vertr{\right\vert}
+\def\Langle{\left\langle}
+\def\Rangle{\right\rangle}
+\def\Lbangle{\big\langle}
+\def\Rbangle{\big\rangle}
+\def\LBangle{\Big\langle}
+\def\RBangle{\Big\rangle}
+\def\Lbbangle{\bigg\langle}
+\def\Rbbangle{\bigg\rangle}
+\def\LBBangle{\Bigg\langle}
+\def\RBBangle{\Bigg\rangle}
+%\def\ranglep{\rangle_{\psisq}}
+\def\ranglep{\rangle_{\!\!\psisq}}
+\def\Ranglep{\Rangle_{\!\!\psisq}}
+\def\S{{\bf S}}
+\def\Ptilde{\tilde{P}}
+\def\Ptildehat{\hat{\tilde{P}}}
+\def\Phat{\hat{P}}
+\def\Ahat{\hat{A}}
+\def\Shat{\hat{S}}
+\def\Rhat{\hat{R}}
+\def\Hhato{\hat{H}^{(0)}}
+\def\Hhatl{\hat{H}^{(1)}}
+\def\Hhat{\hat{H}}
+\def\Vhat{\hat{V}}
+\def\That{\hat{T}}
+\def\Ghat{\hat{G}}
+\def\Hpsibypsi{{H \psi \over \psi}}
+\def\Hpsiibypsi{{H \psii \over \psi}}
+\def\HmEpsibypsi{{(H-E) \psi \over \psi}}
+\def\HmEpsiibypsi{{(H-E) \psii \over \psi}}
+\def\HmEpsijbypsi{{(H-E) \psij \over \psi}}
+\def\psiibypsi{{\psii \over \psi}}
+\def\psijbypsi{{\psij \over \psi}}
+\def\psiijbypsi{{\psiij \over \psi}}
+\def\psiibypsiRk{{\psii(\Rveck) \over \psi(\Rveck)}}
+\def\psijbypsiRk{{\psij(\Rveck) \over \psi(\Rveck)}}
+\def\psiijbypsiRk{{\psiij(\Rveck) \over \psi(\Rveck)}}
+\def\adiagmin{a_{\rm diag}^{\rm min}}
+\def\ET{E_T}
+\def\EL{E_{\rm L}}
+\def\ELi{E_{{\rm L},i}}
+\def\ELj{E_{{\rm L},j}}
+\def\EiL{E_{i{\rm L}}}
+\def\EjL{E_{j{\rm L}}}
+\def\ELR{E_{\rm L}(\Rvec)}
+\def\ELRp{E_{\rm L}(\Rvecp)}
+\def\ELRpp{E_{\rm L}(\Rvecpp)}
+\def\ELRk{E_{\rm L}(\Rveck)}
+\def\ELiRk{E_{{\rm L},i}(\Rveck)}
+\def\ELjRk{E_{{\rm L},j}(\Rveck)}
+\def\Ebar{\bar{E}}
+\def\Ei{\Ebar_{i}}
+\def\Ej{\Ebar_{j}}
+\def\Eij{\Ebar_{ij}}
+\def\Ebar{\bar{E}}
+\def\Elin{{E_\lin}}
+\def\ALi{A_{{\rm L},i}}
+\def\ALj{A_{{\rm L},j}}
+\def\Rvec{{\bf R}}
+\def\Rveck{{\bf R}_k}
+\def\Rvecl{{\bf R}_l}
+\def\NMC{{N_{\rm MC}}}
+\def\NCSF{N_{\rm CSF}}
+\def\Ndet{N_{\rm det}}
+\def\Nparm{N_{\rm parm}}
+\def\Nstates{{N_{\rm st}}}
+\def\lin{{\rm lin}}
+\def\Nopt{N_{\rm opt}}
+\def\Nnonlinear{N_{\rm nonlinear}}
+\def\Nlinear{N_{\rm linear}}
+\def\MC{Monte Carlo}
+\def\adiag{a_{\rm diag}}
+\def\Tcorr{T_{\rm corr}}
+\def\tcorr{t_{\rm corr}}
+\def\sumMC{\sum_{k=1}^{\NMC}}
+\def\sumiMC{\sum_{i=1}^{\NMC}}
+\def\sumn1MC{\sum_{n=1}^{\NMC}}
+\def\sumnMC{\sum_{n=N_{\rm eq}+1}^{N_{\rm eq}+\NMC}}
+\def\sumilNparm{\sum_{i=1}^{N_{\rm parm}}}
+\def\sumjlNparm{\sum_{j=1}^{N_{\rm parm}}}
+\def\sumizNparm{\sum_{i=0}^{N_{\rm parm}}}
+\def\sumj0Nparm{\sum_{j=0}^{N_{\rm parm}}}
+\def\sumjNparm#1{\sum_{j={#1}}^{N_{\rm parm}}}
+\def\sumilNopt{\sum_{i=1}^{N_{\rm opt}}}
+\def\sumjlNopt{\sum_{j=1}^{N_{\rm opt}}}
+\def\sumijlNopt{\sum_{i,j=1}^{N_{\rm opt}}}
+\def\sumizNopt{\sum_{i=0}^{N_{\rm opt}}}
+\def\sumj0Nopt{\sum_{j=0}^{N_{\rm opt}}}
+\def\sumilin{\sum_{i}^{\rm linear}}
+\def\suminonlin{\sum_{i}^{\rm nonlin}}
+\def\sumjlin{\sum_{i}^{\rm linear}}
+\def\sumjnonlin{\sum_{j}^{\rm nonlin}}
+\def\sumjknonlin{\sum_{j,k}^{\rm nonlin}}
+\def\MC{Monte Carlo}
+\def\adiag{a_{\rm diag}}
+\def\intR{{\int {\rm d}^{3N}\!R\;}}
+
+% The foll 170 lines, until --- needed for accelerated Metropolis
+\def\ki{{k,{\rm i}}}
+\def\kf{{k,{\rm f}}}
+\def\O{\Omega}
+\def\vecs#1{{\vec #1 \,}}
+%\def\Rvec{\vecs R}
+\def\Rvec{\bf R}
+\def\Rveci{\Rvec_i}
+%\def\Ri{\vecs R\!_{\rm i}}
+%\def\Rf{\vecs R\!_{\rm f}}
+\def\Ri{{\bf R}\!\,_{\rm i}}
+\def\Rf{{\bf R}\!\,_{\rm f}}
+\def\ri{{\bf r}\!\,_{\rm i}}
+\def\rf{{\bf r}\!\,_{\rm f}}
+%\def\Ri{{\bf R}_{\rm i}}
+%\def\Rf{{\bf R}_{\rm f}}
+
+\def\i{{\Ri}}
+\def\f{{\Rf}}
+
+\def\fvi{\f \vert \i}
+\def\ivf{\i \vert \f}
+\def\ivi{\i \vert \i}
+\def\fvf{\f \vert \f}
+%\def\fvi{\Rf \vert \Ri}
+%\def\ivf{\Ri \vert \Rf}
+%\def\ivi{\Ri \vert \Ri}
+%\def\fvf{\Rf \vert \Rf}
+\def\RfRi{\Rf \vert \Ri}
+\def\RiRf{\Ri \vert \Rf}
+\def\RiRi{\Ri \vert \Ri}
+\def\RfRf{\Rf \vert \Rf}
+%\def\rki{r_{k,i}}
+%\def\rkf{r_\kf}
+\def\rki{r_\ki}
+\def\rkf{r_\kf}
+\def\rkivec{{\bf r}_\ki}
+\def\rav{r_{\rm av}}
+\def\sqrtrkf{\sqrt{\rkf}}
+\def\rkfrki{\rkf \vert \rki}
+\def\rkirkf{\rki \vert \rkf}
+\def\rkirki{\rki \vert \rki}
+\def\rkihat{\hat\rki}
+\def\thetaM{\theta_\M}
+\def\thetam{\theta_\m}
+\def\thetaki{\theta_\ki}
+\def\thetakf{\theta_\kf}
+\def\costhetaM{\cos\thetaM}
+\def\costhetam{\cos\thetam}
+\def\sinthetakf{\sin\thetakf}
+\def\phiki{\phi_\ki}
+\def\phikf{\phi_\kf}
+\def\angki{\thetaki,\phiki}
+\def\angkf{\thetakf,\phikf}
+\def\angkfangki{\angkf \vert \angki}
+\def\angkiangkf{\angki \vert \angkf}
+\def\angkiangki{\angki \vert \angki}
+
+\def\rhoi{\rho(\i)}
+\def\rhof{\rho(\f)}
+\def\rhok{\rho(\k)}
+\def\rhor{\rho(\Rvec)}
+
+%\def\fR{f(\vecs R)}
+%\def\fRi{f(\Ri)}
+%\def\fRf{f(\Rf)}
+%\def\ffRi{f_\f(\Ri)}
+%\def\fiRf{f_\i(\Rf)}
+%\def\giRf{g_\i(\Rf)}
+\def\giRf{g(\Rf \vert \Ri)}
+
+\def\fR{\rho(\Rvec)}
+\def\fRi{\rho(\Ri)}
+\def\fRf{\rho(\Rf)}
+\def\ffRi{\rho_\f(\Ri)}
+\def\fiRf{\rho_\i(\Rf)}
+%\def\giRf{\sigma_\i(\Rf)}
+
+%Matrices for continuous spaces
+\def\P{T}
+\def\Pfi{T(\fvi)}
+\def\Pif{T(\ivf)}
+\def\Mfi{M(\fvi)}
+\def\Mif{M(\ivf)}
+\def\Tfi{T(\fvi)}
+\def\Tif{T(\ivf)}
+\def\Tki{T(\kvi)}
+\def\Tik{T(\ivk)}
+\def\tfi{T(\fvi)}
+\def\tif{T(\ivf)}
+\def\Sfi{S(\fvi)}
+\def\Sif{S(\ivf)}
+\def\Sii{S(\ivi)}
+\def\Sff{S(\fvf)}
+\def\sfi{S(\fvi)}
+\def\sif{S(\ivf)}
+\def\sii{S(\ivi)}
+\def\sff{S(\fvf)}
+\def\Afi{A(\fvi)}
+\def\Aif{A(\ivf)}
+\def\afi{A(\fvi)}
+\def\aif{A(\ivf)}
+
+%Matrices for discrete spaces
+\def\Mij{M_{ij}}
+\def\Mji{M_{ji}}
+\def\Tij{T_{ij}}
+\def\Tji{T_{ji}}
+
+\def\PRfRi{P(\RfRi)}
+\def\PRiRf{P(\RiRf)}
+\def\MRfRi{M(\RfRi)}
+\def\MRiRf{M(\RiRf)}
+\def\TRfRi{T(\RfRi)}
+\def\TRiRf{T(\RiRf)}
+\def\tRfRi{T(\RfRi)}
+\def\tRiRf{T(\RiRf)}
+\def\SRfRi{S(\RfRi)}
+\def\SRiRf{S(\RiRf)}
+\def\SRiRi{S(\RiRi)}
+\def\SRfRf{S(\RfRf)}
+\def\sRfRi{S(\RfRi)}
+\def\sRiRf{S(\RiRf)}
+\def\sRiRi{S(\RiRi)}
+\def\sRfRf{S(\RfRf)}
+\def\ARfRi{A(\RfRi)}
+\def\ARiRf{A(\RiRf)}
+\def\aRfRi{A(\RfRi)}
+\def\aRiRf{A(\RiRf)}
+
+%\def\Ii{I_\i}
+%\def\If{I_\f}
+%\def\Iki{I_\ki}
+%\def\Ikf{I_\kf}
+%\def\Ii{I(\Ri)}
+%\def\Irki{I_{r,k,i}}
+%\def\Itki{I_{\theta,k,i}}
+%\def\Itkf{I_{\theta,k,f}}
+%\def\Ipki{I_{\phi,k,i}}
+%\def\If{I(\Rf)}
+\def\Iki{I_k(\Ri)}
+\def\Ikf{I_k(\Rf)}
+\def\Ii{I(\Ri)}
+\def\Iirf{I(\Rf,\Ri)}
+\def\Irki{I_{r,k}(\Ri)}
+\def\Itki{I_{\theta,k}(\rkf,\Ri)}
+\def\Itkf{I_{\theta,k}(\rki,\Rf)}
+\def\Ipki{I_{\phi,k}}
+\def\If{I(\Rf)}
+\def\Di{D(\Ri)}
+\def\Df{D(\Rf)}
+\def\Oi{\Omega(\Ri)}
+\def\Of{\Omega(\Rf)}
+\def\Deltar{\Delta_r}
+\def\Deltarr{\Deltar^{3/2}}
+\def\DeltaCost{\Delta_{\cos\theta}}
+\def\Deltat{\DeltaCost}
+\def\PsiR{\Psi(\Rvec)}
+\def\PsiRi{\Psi(\Ri)}
+\def\PsiRf{\Psi(\Rf)}
+\def\PsifRi{\Psi_\f(\Ri)}
+\def\PsiiRf{\Psi_\i(\Rf)}
+%\def\Psif{\Psi(\Rf)}
+%\def\Psii{\Psi(\Ri)}
+\def\PhiRi{\Phi(\Ri)}
+\def\PhiRfRi{\Phi(\RfRi)}
+\def\PhiRiRf{\Phi(\RiRf)}
+\def\Phii{\Phi_\i}
+\def\Phif{\Phi_\f}
+%\def\PhiiRf{\Phii(\Rf)}
+%\def\PhifRi{\Phif(\Ri)}
+\def\PhiiRf{\Phi(\Rf \vert \Ri)}
+\def\PhifRi{\Phi(\Ri \vert \Rf)}
+\def\PhiiRfabs{\vert \PhiiRf \vert}
+\def\PhifRiabs{\vert \PhifRi \vert}
+\def\PhiRf{\Phi(\Rf)}
+%\def\Ui{U_{i}}
+%\def\Vi{V_{i}}
+%\def\Wi{W_{i}}
+%\def\Uirkf{U_i(\rkf)}
+%\def\Ufrki{U_f(\rki)}
+%\def\Uirki{U_i(\rki)}
+%\def\Vfi{V_i(\thetakf \vert \rkf)}
+%\def\Vii{V_i(\thetaki \vert \rkf)}
+%\def\Wfi{W_i(\phikf \vert \thetakf, \rkf)}
+%\def\Wii{W_i(\phiki \vert \thetakf, \rkf)}
+\def\Ui{U_{i}}
+\def\Vi{V_{i}}
+\def\Wi{W_{i}}
+\def\Uzi{U(0 \vert \Ri)}
+\def\Ufi{U(\rkf \vert \Ri)}
+\def\Uif{U(\rki \vert \Rf)}
+\def\Uii{U(\rki \vert \Ri)}
+\def\Vfi{V(\thetakf \vert \rkf,\Ri)}
+\def\Vii{V(\thetaki \vert \rkf,\Ri)}
+\def\Wfi{W(\phikf \vert \thetakf, \rkf,\Ri)}
+\def\Wii{W(\phiki \vert \thetakf, \rkf,\Ri)}
+
+%\def\intd3nr{\int \! d^{3n}r \,}
+%\def\intdR{\int \! d\Rvec \,}
+\def\intdR{\int \! d\Rvec \,}
+%\def\intdRp{\int \! d\Rvec' \,}
+%\def\intdRpp{\int \! d\Rvec'' \,}
+%\def\intdRi{\int \! d\Ri \,}
+\def\intdRf{\int \! d\Rf \,}
+
+%\def\Obar{\bar O}
+\def\Ebar{\bar E}
+\def\Abar{\bar A}
+%\def\grad{\vec\nabla}
+\def\grad{\bf\nabla}
+\def\gradk{\grad_k}
+\def\gradkPsiRi{\gradk \PsiRi}
+\def\gradkPsiRf{\gradk \PsiRf}
+%\def\gradR{\vec\nabla_R}
+\def\F{{\bf F}}
+\def\Fk{{\bf F}_k}
+%\def\Fkr{F_{k,r}}
+%\def\Fkx{F_{k,x}}
+%\def\Fkphi{F_{k,\phi}}
+\def\Frk{F_{r,k}}
+\def\Fxk{F_{x,k}}
+\def\Fphik{F_{\phi,k}}
+%\def\psisqexpect{\langle \vert \psi \vert^2 \rangle}
+%\def\Hexpect{\langle \psi H \psi \rangle}
+%\def\Rvec{\vec R}
+\def\Rvec{{\bf R}}
+\def\R{{\bf R}}
+\def\V{{\bf V}}
+\def\sumiN{\sum_{i=1}^N}
+
+\def\xki{x_{k,{\rm i}}}
+\def\xkf{x_{k,{\rm f}}}
+\def\yki{y_{k,{\rm i}}}
+\def\ykf{y_{k,{\rm f}}}
+\def\zki{z_{k,{\rm i}}}
+\def\zkf{z_{k,{\rm f}}}
+
+\def\phii{\phi_{i}}
+\def\phij{\phi_{j}}
+\def\phiij{\phi_{ij}}
+\def\Phii{\Phi_{i}}
+\def\Phij{\Phi_{j}}
+\def\thetai{\theta_{i}}
+\def\thetaj{\theta_{j}}
+\def\Thetai{\Theta_{i}}
+\def\Thetaj{\Theta_{j}}
+\def\pb{\overline{p}}
+\def\pbar{{\bar{p}}}
+\def\pbarvec{{\bar{\bf p}}}
+\def\pibar{\bar{p}_i}
+
+\def\fR{f(\Rvec)}
+\def\fRk{f(\Rveck)}
+\def\JR{J(\Rvec)}
+\def\JRk{J(\Rveck)}
+\def\CR{C(\Rvec)}
+
+\def\Wj{W(j)}
+\def\Wn{W(n)}
+\def\Wji{W_i(j)}
+\def\wk{w(k)}
+\def\Wk{W(k)}
+\def\Wki{W_i(k)}
+\def\Wni{W_i(n)}
+\def\wk{w(k)}
+\def\wm{w(m)}
+\def\wn{w(n)}
+
+\def\nablavec{{\bf \nabla}}
+\def\divV{{\nablavec\cdot\Vvec}}
+
+%---

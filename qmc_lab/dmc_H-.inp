@@ -1,0 +1,15 @@
+n_step_equil = 100
+n_step_per_block = 100
+n_block = 100
+n_orb = 2
+spin = 0
+Z = 1.0
+zeta = 1.0
+zeta1 = 1.18
+zeta2 = 0.55
+b1 = 0.5
+b2 = 0.25
+tau = 0.1
+weight_target = 16
+n_generation_reset_weight = 10
+run_type = "dmc"

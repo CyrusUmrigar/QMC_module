@@ -1,0 +1,343 @@
+%\input jnl/jnl.tex
+%\input jnl/eqnorder.tex
+%\input jnl/reforder.tex
+\hyphenation{cal-cu-la-tion cal-cu-la-tions}
+
+\def\cf{{\it cf.}}
+\def\eg{{\it e.g.}}
+\def\etal{{\it et~al.}}
+\def\ibid{\it ibid., \rm}
+\def\etc{{\it etc.}}
+\def\ie{{\it i.e.}}
+\def\viz{{\it viz.}}
+
+%\def\begintable{\medskip\hrule\medskip}
+%\def\beq{\begin{eqnarray*} \color{blue}}
+%\def\eeq{\end{eqnarray*}}
+\def\ul{\underline}
+
+%\def\newpage{\vfill\eject}
+\def\ni{\noindent}
+
+\def\VMC{Variational \MC}
+\def\vMC{variational \MC}
+\def\DMC{Diffusion \MC}
+\def\dMC{diffusion \MC}
+\def\GFMC{Green function \MC}
+\def\MC{Monte Carlo}
+
+\def\OpOne{\hat{\mathbf{1}}}
+
+\def\Ngen{{N_{\rm gen}}}
+\def\Nwalk{N_{\rm walk}}
+
+\def\Grpr{G(\Rvecp,\Rvec)}
+\def\Grprt{G(\Rvecp,\Rvec,t)}
+\def\Grprtau{G(\Rvecp,\Rvec,\tau)}
+\def\Grpprtau{G(\Rvecpp,\Rvec,\tau)}
+\def\Grprz{G(\Rvecp,\Rvec,0)}
+\def\Grrpt{G(\Rvec,\Rvecp,t)}
+\def\Grrptau{G(\Rvec,\Rvecp,\tau)}
+\def\Gt{\tilde{G}}
+\def\Ht{\tilde{H}}
+%\def\Gt2rprtau{\tilde{G}_2(\Rvecp,\Rvec,\tau)}
+\def\Tt{\tilde{T}}
+\def\At{\tilde{A}}
+\def\GtRpR{\tilde{G}(\Rvecp,\Rvec)}
+\def\TtRpR{\tilde{T}(\Rvecp,\Rvec)}
+\def\Gtrprtau{\tilde{G}(\Rvecp,\Rvec,\tau)}
+\def\Gtrrptau{\tilde{G}(\Rvec,\Rvecp,\tau)}
+\def\G2rprtau{G_2(\Rvecp,\Rvec,\tau)}
+%\def\G2r1pr1tau{G_2(\Rvec_1',\Rvec_1,\tau)}
+%\def\G2r2pr2tau{G_2(\Rvec_2',\Rvec_2,\tau)}
+\def\GDD{G_{\rm DD}}
+%\def\GDDrrptau{G_{\rm DD}(\Rvec,\Rvecp,\tau)}
+\def\GtDDrrptau{\tilde{G}_{\rm DD}(\Rvec,\Rvecp,\tau)}
+\def\GR{G_{\rm R}}
+\def\GAPP{G_{\rm APP}}
+\def\GtAPPrrptau{\tilde{G}_{\rm APP}(\Rvec,\Rvecp,\tau)}
+\def\GAPPrrptau{G_{\rm APP}(\Rvec,\Rvecp,\tau)}
+\def\GPP{G_{\rm PP}}
+
+\def\Pthat{\hat{\tilde{P}}}
+
+\def\Pii{{P_{ii}}}
+\def\Pij{{P_{ij}}}
+\def\Pji{{P_{ji}}}
+\def\Pki{{P_{ki}}}
+\def\Pi{{P_{i}}}
+\def\Pioff{{P}^{\rm off}_i}
+\def\PLi{P_{{\rm L},i}}
+\def\PLj{P_{{\rm L},j}}
+\def\PLk{P_{{\rm L},k}}
+
+\def\Pt{{\tilde{P}}}
+\def\Ptii{{\tilde{P}_{ii}}}
+\def\Ptij{{\tilde{P}_{ij}}}
+\def\Ptji{{\tilde{P}_{ji}}}
+\def\Ptki{{\tilde{P}_{ki}}}
+\def\Ptkj{{\tilde{P}_{kj}}}
+\def\Htji{{\tilde{H}_{ji}}}
+
+\def\EVMC{E_{\rm VMC}}
+\def\EDMC{E_{\rm DMC}}
+\def\EPMC{E_{\rm PMC}}
+\def\ELrp{E_{\rm L}(\Rvecp)}
+\def\ELr{E_{\rm L}(\Rvec)}
+\def\PLR{P_{\rm L}(\Rvec)}
+\def\PL{P_{\rm L}}
+\def\EL{E_{\rm L}}
+\def\ET{E_{\rm T}}
+\def\EFN{E_{\rm FN}}
+\def\Egr{E_{\rm gr}}
+\def\Eg{E_{\rm g}}
+\def\Emix{E_{\rm mix}}
+\def\Em{E_{\rm m}}
+\def\Ekin{E_{\rm kin}}
+\def\Eest{E_{\rm est}}
+\def\Eij{E_{ij}}
+\def\El{E(\lambda)}
+\def\Eil{E_i(\lambda)}
+\def\Ejl{E_j(\lambda)}
+\def\dele{{$\Delta E~$}}
+
+\def\frptt{f(\Rvecp,t+\tau)}
+\def\frth{f(\Rvec,\that)}
+\def\frt{f(\Rvec,t)}
+
+\def\ideal{$\psiT\!=\!\psiz$}
+
+\def\psiGr{\psi_{\rm G}(\Rvec)}
+\def\psiG{\psi_{\rm G}}
+\def\psiTrp{\psi_{\rm T}(\Rvecp)}
+\def\psiTr{\psi_{\rm T}(\Rvec)}
+\def\psiT{\psi_{\rm T}}
+\def\psiFN{{\psi_{\rm FN}}}
+\def\psiFNi{{\psi_{{\rm FN},i}}}
+\def\psiFNj{{\psi_{{\rm FN},j}}}
+\def\psiFNij{{\psi_{{\rm FN},ij}}}
+\def\psialf{\psi^\alpha}
+\def\psiir{\psi_i(\Rvec)}
+\def\psijr{\psi_j(\Rvec)}
+\def\psinorm{${\vert \psi \vert}^2$}
+\def\psionorm{${\vert \psi_o \vert}^2$}
+\def\psirptt{\psi(\Rvecp,t+\tau)}
+\def\psirtt{\psi(\Rvec,t+\tau)}
+\def\psirt{\psi(\Rvec,t)}
+\def\psir{\psi(\Rvec)}
+\def\psisqexpect{\langle \vert \psi \vert^2 \rangle}
+%\def\psisq{{\vert \psi \vert^2}}
+\def\psizr{\psi_0(\Rvec)}
+\def\psiz{\psi_0}
+\def\PsiRt{\Psi(\Rvec,t)}
+
+\def\PsiGr{\Psi_{\rm G}(\Rvec)}
+\def\PsiG{\Psi_{\rm G}}
+\def\PsiTrp{\Psi_{\rm T}(\Rvecp)}
+\def\PsiTr{\Psi_{\rm T}(\Rvec)}
+\def\PsiT{\Psi_{\rm T}}
+\def\PsiFN{\Psi_{\rm FN}}
+\def\PsiFNi{{\Psi_{{\rm FN},i}}}
+\def\PsiFNj{{\Psi_{{\rm FN},j}}}
+\def\PsiFNij{{\Psi_{{\rm FN},ij}}}
+\def\Psialf{\Psi^\alpha}
+\def\Psiir{\Psi_i(\Rvec)}
+\def\Psijr{\Psi_j(\Rvec)}
+\def\Psinorm{${\vert \Psi \vert}^2$}
+\def\Psionorm{${\vert \Psi_o \vert}^2$}
+\def\Psirptt{\Psi(\Rvecp,t+\tau)}
+\def\Psirtt{\Psi(\Rvec,t+\tau)}
+\def\Psirt{\Psi(\Rvec,t)}
+\def\Psir{\Psi(\Rvec)}
+\def\Psisqexpect{\langle \vert \Psi \vert^2 \rangle}
+\def\Psisq{\vert \Psi \vert^2}
+\def\Psizr{{\Psi_0(\rvec)}}
+\def\Psizrp{{\Psi_0(\rvecp)}}
+\def\PsizR{{\Psi_0(\Rvec)}}
+\def\PsizRp{{\Psi_0(\Rvecp)}}
+\def\Psiz{{\Psi_0}}
+\def\PsiRt{\Psi(\Rvec,t)}
+
+\def\PsiFN{\Psi_{\mathrm FN}}
+\def\HFN{H_{\mathrm FN}}
+\def\PFN{P_{\mathrm FN}}
+\def\HFNhat{\hat{H}_{\mathrm FN}}
+\def\PFNhat{\hat{P}_{\mathrm FN}}
+
+%\def\GradR{\vec\nabla_R}
+%\def\Grad{\vec\nabla}
+\def\grad{\vec\partial}
+
+\def\GradR{{\bf\nabla}_R}
+\def\Grad{{\bf\nabla}}
+
+\def\Hexpect{\langle \psi H \psi \rangle}
+\def\Obar{\bar O}
+\def\SbarR{\bar S(\Rvec)}
+\def\SbarRp{\bar S(\Rvecp)}
+\def\Sbar{\bar S}
+
+%\def\Hminus{{$\rm H^-~$}}
+%\def\Liplus{$\rm ~Li^+~$}
+%\def\Betwoplus{$\rm ~Be^{2+}~$}
+%\def\htwop{H$_2^+$}
+%\def\htwo{H$_2$}
+%\def\singS{{$~^1\!S~$}}
+%\def\onesingSHminus{{$~1\,^1\!S \, \rm H^-~$}}
+%\def\onesingS{{$~1\,^1\!S~$}}
+%\def\twotripS{{$~2\,^3\!S~$}}
+%\def\threetripSHe{{$~3\,^3\!S\,{\rm He}~$}}
+%\def\threetripS{{$~3\,^3\!S~$}}
+%\def\tripS{{$~^3\!S~$}}
+
+%\def\nprime{{\n^\pri}}
+%\def\ntprime{{\n'\t'}}
+%\def\nt{{\n\t}}
+%\def\nx{n_{\scriptstyle x}}
+%\def\ny{n_{\scriptstyle y}}
+%\def\nz{n_{\scriptstyle z}}
+%\def\n{{\vec n}}
+%\def\oijk{O(i\ j\ k)}
+%\def\okij{O(k\ i\ j)}
+%\def\pade{Pad\'e\ }
+%\def\pri{{\,\prime}}
+
+%\def\tx{t_{\scriptstyle x}}
+%\def\ty{t_{\scriptstyle y}}
+%\def\tz{t_{\scriptstyle z}}
+%\def\t{{\vec t}}
+
+%\def\snt{{S_{\n\t}}}
+%\def\snxtxprimep{{S_{\nx''\tx''}}}
+%\def\snxtxprime{{S_{\nx'\tx'}}}
+%\def\snxtx{{S_{\nx\tx}}}
+%\def\snytyprimep{{S_{\ny''\ty''}}}
+%\def\snytyprime{{S_{\ny'\ty'}}}
+%\def\snyty{{S_{\ny\ty}}}
+%\def\snztzprimep{{S_{\nz''\tz''}}}
+%\def\snztzprime{{S_{\nz'\tz'}}}
+%\def\snztz{{S_{\nz\tz}}}
+
+\def\sumiN{\sum_{i=1}^N}
+\def\sumin{\sum_{i=0}^n}
+\def\sumii{\sum_{i=0}^{\infty}}
+
+\def\intdtr{\int \! d^{3}r \,}
+\def\intd3nr{\int \! d^{3n}r \,}
+\def\intdRpp{\int \! d\Rvec'' \,}
+\def\intdRp{\int \! d\Rvec' \,}
+\def\intdR{\int \! d\Rvec \,}
+
+\def\rttau{\sqrt{\tau}}
+\def\that{{\hat t}}
+\def\taueff{\tau_{\rm eff}}
+\def\tautrue{\tau_{\rm true}}
+\def\Tp{T_{\rm p}}
+\def\Tcorr{{T_{\rm corr}}}
+\def\Teq{T_{\rm eq}}
+
+\def\VbarR{\bar V(\Rvec)}
+%\def\VbarvecR{\bar{\vec V}(\Rvec)}
+\def\VbarvecR{\bar{\bf V}(\Rvec)}
+\def\Vbarvec{\bar{\vec V}}
+\def\Vbar{\bar V}
+\def\VvecRp{\vec V(\Rvecp)}
+\def\VvecR{\vec V(\Rvec)}
+\def\Vvecr{\vec V(\Rvec)}
+\def\vvecr{\vec v(\Rvec)}
+\def\Vvecp{\vec V \,'}
+\def\Vvec{\vec V}
+\def\vbarvec{\bar{\vec v}}
+\def\vbar{\bar v}
+\def\vvec{\vec v}
+\def\wvec{\vec w}
+\def\vhat{{\hat v}}
+\def\zhat{{\hat z}}
+\def\zvec{{\vec z}}
+
+\def\VvecR{{\bf V}(\Rvec)}
+\def\Vvec{{\bf V}}
+\def\dvec{{\mathbf d}}
+
+
+\def\RRs{\big({S^2+T^2 \over 2}\big)^{1/2}}
+\def\RRR{{S^2+T^2 \over 2}}
+\def\RR{\bigg({S^2+T^2 \over 2}\bigg)^{1/2}}
+%\def\RR{\RRR^{1/2}}
+
+\def\rvecpnuc{{\vec r\,'_{\rm nuc}}}
+\def\rvecnuc{{\vec r_{\rm nuc}}}
+\def\rvecpp{{\vec r \,''}}
+\def\rvecp{{\vec r \,'}}
+%\def\rvec{{\vec r}}
+\def\rvec{{\bf r}}
+\def\rvecp{{\bf r}'}
+\def\rveci{{\bf r}_i}
+\def\rvecj{{\bf r}_j}
+\def\rveck{{\bf r}_k}
+\def\rvecpi{{\bf r}'_i}
+\def\rvecpj{{\bf r}'_j}
+\def\rvecpk{{\bf r}'_k}
+\def\rvecN{{\bf r}_N}
+\def\rvecpN{{\bf r}'_N}
+\def\rhat{{\hat r}}
+\def\rvecij{\rvec_{ij}}
+\def\rvecpij{\rvec'_{ij}}
+\def\rvecia{\rvec_{i\alpha}}
+\def\rvecpia{\rvec'_{i\alpha}}
+\def\rij{r_{ij}}
+
+\def\Rvecpp{{\vec R \,''}}
+\def\Rvecp{{\vec R \,'}}
+%\def\Rvec{\vec R}
+%\def\Rperp{R_\perp}
+
+%\def\Rvecpp{{{\bf R} \,''}}
+%\def\Rvecp{{{\bf R} \,'}}
+\def\Rvecpp{{{\bf R}^{''}}}
+\def\Rvecp{{{\bf R}^{'}}}
+\def\Rvecnp#1{{{\bf R}_{#1}^{'}}}
+\def\Rvec{{\bf R}}
+\def\Rperp{{\bf R}_\perp}
+
+\def\Pvecp{{\bf P} \,'}
+\def\Pvec{{\bf P}}
+\def\gvec{{\bf g}}
+
+\def\fRi{f(\Ri)}
+\def\fRf{f(\Rf)}
+\def\fR{f(\Rvec)}
+\def\fRt{f(\Rvec,t)}
+%\def\tfi{T(\RfRi)}
+%\def\tif{T(\RiRf)}
+\def\tfi{G(\RfRi)}
+\def\tif{G(\RiRf)}
+\def\afi{A(\RfRi)}
+\def\aif{A(\RiRf)}
+
+%\def\RfRi{\Rf \vert \Ri}
+%\def\RiRf{\Ri \vert \Rf}
+\def\RfRi{\Rf,\Ri}
+\def\RiRf{\Ri,\Rf}
+
+%\def\Ri{\vec R\!_{\rm i}}
+%\def\Rf{\vec R\!_{\rm f}}
+%\def\Ri{\vec R}
+%\def\Rf{\vec R'}
+
+\def\taubf{{\boldsymbol{\tau}}}
+
+\def\ptilde{\tilde p}
+\def\qtilde{\tilde q}
+
+\def\Rvecc{{\vecs R}}
+\def\vecs#1{{\vec #1 \,}}
+
+\def\W{{\cal W}}
+
+\def\UK{{U_{\rm K}}}
+\def\UV{{U_{\rm V}}}
+\def\uen{{u_{\rm en}}}
+\def\uee{{u_{\rm ee}}}
+\def\wen{{w_{\rm en}}}
+\def\wee{{w_{\rm ee}}}
