@@ -1,0 +1,67 @@
+Zero-temperature Quantum Monte Carlo Methods in Chemistry and Physics
+Cyrus Umrigar
+1:30-3:00 Eastern US time (M,W,F):  April 27, 29, May 1, 4, 6, 8
+
+This module will consist of lectures and a hands-on computer lab
+
+Topics will likely include:
+Zero-temperature QMC in a nutshell (4 viewgraphs!)
+When to use classical or quantum MC?
+  Why in the world would one intentionally introduce randomness?
+Brief history of Monte Carlo methods
+Classical MC techniques useful in QMC
+  Central limit theorem
+    Recognizing infinite-variance estimators
+  Monte Carlo integration
+  Importance sampling
+    Transforming infinite-variance estimators to finite-variance estimators
+  Direct sampling of (simple) distributions
+    Transformation method
+    Rejection method
+  Metropolis-Hastings method
+    Choice of optimal proposal probability (requires thought)
+    Choice of optimal acceptance probability (straightforward)
+Variational Monte Carlo
+  Forms of wavefunctions
+  Optimization of wavefunctions (trickier than you may think)
+    Measures of goodness
+    Newton method
+    Linear method
+Projector Monte Carlo
+  Choice of space in which MC walk is performed (both finite and infinite)
+  Choices for projector
+  Sign-problem in different QMC methods
+  Branching random walks
+  Population control and how to remove population control bias
+  Diffusion Monte Carlo
+    Projector without and with importance sampling
+    Fixed-node approximation
+    Expectation values of observables that do not commute with the Hamiltonian
+      Forward walking and side walking
+    Techniques for reducing the time-step (Trotter) error
+  Methods with no Trotter error in finite spaces
+Other QMC methods -- AFQMC, ...
+
+Homeworks and computer labs (Two short ones and one longer one):
+1) Transforming infinite-variance estimator to finite-variance estimator
+2) Unbiased estimators
+3) You will write your own toy program in Python to:
+   a) use VMC to compute variational upper bounds for energy of ground state of
+      He atom and H^- ion, and first excited state of He atom.
+   b) use DMC to compute the exact energies (aside from small statistical and Trotter errors)
+      of these systems.
+
+The following two pedagogic articles (included in this github repository) and book have
+a strong overlap with the topics I will cover:
+1) Introduction to variational and projector Monte Carlo, C. J. Umrigar,
+   in Many-Body Methods for Real Materials Modeling and Simulation Vol. 9
+   Advances in Quantum Chemistry, ed. Eva Pavarini, Erik Koch and Shiwei Zhang
+2) Introduction to the variational and diffusion Monte Carlo methods,
+   Julien Toulouse and Roland Assaraf and C. J. Umrigar,
+   Advances in Quantum Chemistry (2015)
+3) Quantum Monte Carlo Approaches for Correlated Systems, Federico Becca and Sandro Sorella
+
+I will not be talking about finite temperature QMC and for the most part I will not talk
+about QMC methods that are used mostly for lattice models.  For these some good references are:
+1) Path-integrals in the theory of condensed helium, David M. Ceperley, Rev. Mod. Phys. 67, 279 (1995).
+2) Quantum Monte Carlo Methods, Algorithms for lattice models, Gubernatis, Kawashima and Werner
