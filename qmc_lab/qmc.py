@@ -13,12 +13,12 @@ class Walker:
 
     def take_step(self, tau):
         # The * converts tuple (2 3) to 2 integers
-        "XXX - Eq. 16"
+        "XXX - Eq. 17"
         return Walker(self.wf, proposed_coord, self.weight)
 
     def propagate_to(self, new_coord, tau):
         #Amplitude (w/o normalization) to propagate to new_coord in time tau
-        "XXX - Eq. 14"
+        "XXX - Eq. 15"
         return prop
     
 class QMC:
@@ -55,12 +55,12 @@ class QMC:
     #Propagator methods
     def reweight(self, new_wkr, old_wkr):
         """Update weights of new_wkr"""
-        "XXX - Eq. 26"
+        "XXX - Eq. 27"
         return
 
     def accept(self, new_wkr, old_wkr):
         """Return True if new_wkr is accepted, otherwise False"""
-        "XXX - Eq. 15"
+        "XXX - Eq. 16"
         return new_wkr_accepted
 
     #Accumulate methods
@@ -239,7 +239,7 @@ class QMC:
                 if self.method == "dmc":
                     e_est = self.energy_estimator()
                     """Update e_trial"""
-                    self.e_trial = "XXX - Eq. 27"
+                    self.e_trial = "XXX - Eq. 28"
                     self.split_join()
                     #self.integerize_walkers()
             self.end_block()
