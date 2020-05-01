@@ -1,0 +1,8 @@
+#! /bin/bash
+source activate py3
+for file in $*
+do
+  in=$file
+  out=`echo $in | sed -e 's/inp/out/'`
+  python main.py $in >& $out
+done
