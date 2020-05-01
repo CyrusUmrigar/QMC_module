@@ -226,4 +226,4 @@ if __name__ == "__main__":
     test_numeric_analyt(SlaterJastrow(Slater1Orb(2.0),Jastrow(0.5,1.0)))
   
     print("\nSlater2Orb WF")
-    test_numeric_analyt(SlaterJastrow(Slater2Orb(1, 1, 1.18, 0.55, 1), Jastrow(0.5, 0.27)))
+    test_numeric_analyt(SlaterJastrow(Symm2Orb(1, 1, 1.18, 0.55), Jastrow(0.5, 0.27)))
