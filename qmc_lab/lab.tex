@@ -9,6 +9,7 @@
 \usepackage{float}
 \usepackage{dcolumn}% Align table columns on decimal point
 \usepackage{fancyvrb} % for "\Verb" macro
+\usepackage{etoolbox} % needed for preto
 
 \topmargin -20mm
 
@@ -39,6 +40,11 @@
 \def\r2hat{\hat{r_2}}
 \def\EL{E_{\rm L}}
 \def\Tcorr{T_{\rm corr}}
+\makeatletter
+%\def\verbatim@font{\linespread{1}\normalfont\ttfamily}
+\def\verbatim@font{\linespread{1}\ttfamily}
+\preto{\@verbatim}{\topsep=0pt \partopsep=0pt }
+\makeatother
 
 \definecolor{darkgreen}{rgb}{0,0.8,0} % The smaller the number the darker it is
 
@@ -62,16 +68,18 @@ Variational and Diffusion Monte Carlo for ground and 1$^{st}$ excited state of 2
 
 \section{Introduction}
 
-We will implement toy VMC and DMC programs in Python to calculate the $^1S$ ground and $^3S$ first excited state
-of Helium (or more generally any 2-electron atom/ion).
-VMC will give a variational upper bound for both states, whereas DMC will give the exact energies (aside
-from statistical error, which can be made arbitrarily small by running longer).
+We will implement toy VMC and DMC programs in Python to calculate the $^1S$ ground states of
+He and H$^-$, and the $^3S$ first excited state of Helium.
+Of course the same program could be used for the $^1S$ and $^3S$ states of any 2-electron ion.
+VMC will give a variational upper bound for all the three states, whereas DMC will give the exact energies
+(aside from statistical error and Trotter error, both of which can be systematically reduced
+with a relatively modest increase in computer time).
 The program is a "toy" in that a) it will work only for 2-electron atoms/ions,
 b) we will use much simpler trial wavefunctions than we would in a research code for these systems,
 and c) that we will not be concerned very much about fast execution.
 Nevertheless, this program will illustrate some of the important concepts in VMC and DMC.
 
-Most of the code is already written, but some lines are missing (look for "xxx" in the code) and you
+Most of the code is already written, but some lines are missing (look for "XXX" in the code) and you
 have to provide them.
 We will build up the code in steps, testing each step as we go.
 The parts of this writeup where you have to provide answers are in {\color{blue} blue}.
@@ -158,16 +166,18 @@ We will refer to the $3N_{\rm elec} = 6$ dimensional vector, $\Vvec$ as the drif
 
 Plugging in this wavefunction and Hamiltonian, one can show that the
 local energy is given by
-\begin{eqnarray*}
-E_{L}=\frac{1}{\psi}H\psi & = & -\zeta ^{2}+\left(\zeta -Z\right)\left(\frac{1}{r_{1}}+\frac{1}{r_{2}}\right)+\frac{1}{r_{12}}\left(1-\frac{2b_1}{\left(1+b_2 r_{12}\right)^{2}}\right)\\
+%\begin{eqnarray*}
+\beq
+E_{L}=\frac{1}{\psi}H\psi & = & -\zeta ^{2}+\left(\zeta -Z\right)\left(\frac{1}{r_{1}}+\frac{1}{r_{2}}\right)+\frac{1}{r_{12}}\left(1-\frac{2b_1}{\left(1+b_2 r_{12}\right)^{2}}\right) \nonumber \\
  &  & +\frac{2b_1 b_2}{\left(1+b_2 r_{12}\right)^{3}}-\frac{b_1^{2}}{\left(1+b_2 r_{12}\right)^{4}}+\frac{\zeta b_1}{\left(1+b_2 r_{12}\right)^{2}}\hat{r}_{12}\cdot\left(\hat{r}_{1}-\hat{r}_{2}\right).
 \label{E_local}
-\end{eqnarray*}
+%\end{eqnarray*}
+\eeq
 
 {\color{blue}
 \textbf{Q1. Implement these two components of the wavefunction and their gradients and Laplacians in wavefunction.py:}\\
 Within wavefunction.py there are functions that test your implementation by calculating the gradients
-and Laplacians numerically and prints out the difference between the numerical evaluation and the analytic.
+and Laplacians numerically, and print out the difference between the numerical evaluation and the analytic one.
 The numerical evaluation is done for different discretization steps, $\Delta$.
 It does this test for the determinantal and the Jastrow parts separately before doing the product wavefunction
 to help you debug each part separately.
@@ -203,7 +213,7 @@ What values must two of these parameters take to do this?
 
 After having imposed the cusp conditions, there are no divergences in $\EL$.
 Is $\EL$ continuous now? \\
-Hint: Look at the last term of $\EL$.
+Hint: Look at the last term of $\EL$ in Eq.~\ref{E_local}.
 }
 
 \section{Metropolis-Hastings method and Variational Monte Carlo}
@@ -270,6 +280,12 @@ Why is the statistical error of the energy much smaller than that of its compone
 Once you have Metropolis-Hastings working for ``Slater" it will also work for ``Slater-Jastrow".
 So, now you can run it for various values of our one variational parameter, $b_2$ and fill out
 the blank spots in the table below.
+%You can go to the runs/He\_1S subdirectory and do the runs there with the command
+You can go to the runs:
+\begin{verbatim}
+cd runs/He_1S
+../run vmc_He*inp &
+\end{verbatim}
 So, you are doing a 1-parameter optimization by hand.  In a research-level QMC program it is a simple
 matter to optimize a wavefunction with a few dozen parameters to get an accuracy of better than
 a microHartree for such simple systems, as shown at the bottom of Table~\ref{He}.
@@ -315,7 +331,9 @@ Is the statistical error minimum (for a given \# of MC steps) also minimized for
 What about $\sigma$ and $\Tcorr$?
 
 Once you have a near optimal value of $b_2$, find a near-optimal value of the time-step $\tau$, by
-filling out the following table:
+filling out the following table.  Use the same values of $N_s$ and $N_b$ for all the $\tau$, but
+make sure that $N_s$ is large enough that you are not significantly underestimating $\Tcorr$
+and that $N_b$ is large enough that you have enough statistics.
 \begin{table}[H]
 \begin{center}
 \color{blue}
@@ -366,9 +384,12 @@ Note that we have chosen a form for $\phi_2(r)$ that satisfies the cusp conditio
 Eq.~\ref{orbital} with $\zeta=Z$.
 
 {\color{blue}
-\textbf{Q4. Try better wavefunction for H$^-$:}\\ 
+\textbf{Q4. Try the better wavefunction for H$^-$:}\\ 
 Use the wavefunction in Eqs.~\ref{wavefn2}, \ref{Jastrow}, \ref{orbital2} with
 $\zeta=1, \zeta_1=1.18, \zeta_2=0.55, b_2=0.27$ to see whether it predicts a stable H$^-$ ion.
+Note that both the excited state of He, and the ground state of H$^-$ are more extended
+than the ground state of He, so the most efficient $\tau$ is larger.
+For H$^-$ you could increase $\tau$ to something like 0.6 Ha$^{-1}$.
 
 \begin{table}[H]
 \begin{center}
@@ -419,7 +440,7 @@ There is one other thing we need to take care of for any system where the wavefu
 The drift velocity, $\Vvec$, in Eq.~\ref{drift} diverges at nodes.  So, on the rare occasions when
 a walker lands very close to a node, the drift shoots it out a very long distance, and since the
 probability of the reverse Metropolis-Hastings move is small, the forward move has a low probability
-of being accepted.  This is a problem even in VMC, but can becomes a more serious problem in DMC
+of being accepted.  This is a problem even in VMC, but becomes a more serious problem in DMC
 because the local energy diverges to $+\infty$ on one side of the node and to $-\infty$ on the
 other side.  On the $-\infty$ side one can get a multiplicity of walkers that stay stuck there.
 This problem is easily taken care of by thinking in terms of doing a crude average of the
@@ -442,13 +463,13 @@ In the limit of small $\tau$ we recover $\bar{\Vvec} = \Vvec$.
 
 {\color{blue}
 \textbf{Q5. Try this wavefunction for $^3$S state of He:}\\ 
-Use the wavefunction in Eqs.~\ref{Slater_Jastrow}, with
+Use the wavefunction in Eq.~\ref{Slater_Jastrow}, with
 $\zeta=2, \zeta_1=1.48, \zeta_2=0.62$, and various $b_2$ to compute the energy of the $^3$S state of He.
 
 \begin{table}[H]
 \begin{center}
 \color{blue}
-\caption{Variational energy, statistical error, $\sigma$, and $\Tcorr$ for various simple He atom wavefunctions
+\caption{Variational energy, statistical error, $\sigma$, and $\Tcorr$ for the $^3$S first excited state of He atom using the wavefunction in Eq.~\ref{Slater_Jastrow}
 in Hartree units. The statistical error in the last digit of $E_{\rm VMC}$ is shown in parentheses.}
 \label{He_ex}
 \begin{tabular}{|l|c|c|c|c|c|d|c|c|}
@@ -536,6 +557,8 @@ Implement Eqs.~\ref{rewt} and \ref{popcontrol} in qmc.py.
 Then calculate the DMC energies for $^1$S states of He and H$^-$ and $^3$S states of He to fill out the
 tables below.  We do each of these for a few values of $\tau$ to make sure that the time-step error is
 negligible compared to the desired accuracy and to extrapolate to $\tau=0$ if necessary.
+Make sure that $N_s$ is large enough that you are not significantly underestimating $\Tcorr$
+and that $N_b$ is large enough that you have enough statistics.
 
 \begin{table}[H]
 \begin{center}
@@ -568,12 +591,11 @@ $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ 
 \hline 
 $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
 \hline 
-0.005&  &  & \tabularnewline
-0.01 &  &  & \tabularnewline
 0.02 &  &  & \tabularnewline
 0.05 &  &  & \tabularnewline
 0.1 &  &  & \tabularnewline
 0.2 &  &  & \tabularnewline
+0.5 &  &  & \tabularnewline
 \hline 
 \end{tabular}\\
 \end{center}
@@ -589,7 +611,6 @@ $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ 
 \hline 
 $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
 \hline 
-0.005&  &  & \tabularnewline
 0.01 &  &  & \tabularnewline
 0.02 &  &  & \tabularnewline
 0.05 &  &  & \tabularnewline
@@ -605,3 +626,4 @@ How close do you get to the highly accurate values given in the VMC tables?
 }
 
 \end{document}
+
