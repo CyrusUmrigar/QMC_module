@@ -120,13 +120,6 @@ class Symm2Orb(Slater2Orb):
 class Antisymm2Orb(Slater2Orb):
     def __init__(self, Z, zeta, zeta1, zeta2, tau):
         Slater2Orb.__init__(self, Z, zeta, zeta1, zeta2, -1)
-        self.tau = tau
-
-    def drift_velocity(self, r):
-        dv = Slater2Orb.drift_velocity(self, r)
-        vn = norm(dv)
-        av = (-1 + np.sqrt(1 + 2*vn**2*self.tau))/(vn**2*self.tau)
-        return av*dv
          
 #-------------------------
 
