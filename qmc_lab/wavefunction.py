@@ -92,8 +92,7 @@ class Antisymm2Orb(Wavefunction):
     def drift_velocity(self,r):
         """Return the drift_velocty, grad(Det)/Det, at position r"""
         "XXX"
-        av = 1 #Implement averaged drift velocity term
-        return av*sla_grad
+        return sla_grad
 
     def local_laplacian(self,r):
         """Return the local laplacian, Laplacian(Det)/Det, at position r"""
