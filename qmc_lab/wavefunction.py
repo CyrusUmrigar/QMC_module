@@ -83,6 +83,7 @@ class Antisymm2Orb(Wavefunction):
         self.zeta1 = zeta1
         self.zeta2 = zeta2
         self.tau = tau
+        self.sign = -1
 
     def value(self,r):
         """Return the value of the wavefunction at position r"""
