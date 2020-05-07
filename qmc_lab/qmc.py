@@ -23,6 +23,10 @@ class Walker:
 
     def propagate_to(self, new_coord, tau):
         #Amplitude (w/o normalization) to propagate to new_coord in time tau
+        av = 1
+        if getattr(self.wf.wf1, "sign", 1) == -1:
+            vn = norm(self.drift_velocity)
+            av = (-1 + np.sqrt(1 + 2*vn**2*tau))/(vn**2*tau)
         "XXX - Eq. 15"
         return prop
     
