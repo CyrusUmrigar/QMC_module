@@ -1,0 +1,15 @@
+n_step_equil = 100
+n_step_per_block = 1000
+n_block = 1000
+n_orb = 2
+spin = 1
+Z = 2.0
+zeta = 2.0
+zeta1 = 1.48
+zeta2 = 0.62
+b1 = 0.25
+b2 = 0.5
+tau = 0.15
+weight_target = 1
+n_generation_reset_weight = 10
+run_type = "vmc"

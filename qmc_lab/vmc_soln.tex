@@ -46,7 +46,7 @@
 \preto{\@verbatim}{\topsep=0pt \partopsep=0pt }
 \makeatother
 
-\definecolor{darkgreen}{rgb}{0,0.8,0} % The smaller the number the darker it is
+\definecolor{darkgreen}{rgb}{0,0.4,0} % The smaller the number the darker it is
 
 \makeatletter
 
@@ -193,33 +193,42 @@ Once you think it is working, fill out the table below to show what you get for 
 \hline
 $\Delta$ & gradient error & Laplacian error \\
 \hline
-$1 \times 10^{-3}$ &  & \tabularnewline
+$1 \times 10^{-3}$ & $3.34 \times 10^{-7}$ & $1.16 \times 10^{-6}$\tabularnewline
 \hline
-$1 \times 10^{-4}$ &  & \tabularnewline
+$1 \times 10^{-4}$ & $3.35 \times 10^{-9}$ & $2.67 \times 10^{-8}$\tabularnewline
 \hline
-$1 \times 10^{-5}$ &  & \tabularnewline
+$1 \times 10^{-5}$ & $3.65 \times 10^{-11}$ & $5.81\times 10^{-6}$ \tabularnewline
 \hline
-$1 \times 10^{-6}$ &  & \tabularnewline
+$1 \times 10^{-6}$ & $1.59\times 10^{-10}$ & $1.31\times 10^{-3}$\tabularnewline
 \hline
-$1 \times 10^{-7}$ &  & \tabularnewline
+$1 \times 10^{-7}$ & $1.08\times 10^{-9}$ & $1.42\times 10^{-1}$\tabularnewline
 \hline
-$1 \times 10^{-8}$ &  & \tabularnewline
+$1 \times 10^{-8}$ & $1.37\times 10^{-8}$  & $8.17$\tabularnewline
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
 Why is there an optimal value of $\Delta$ for both the gradient and the Laplacian?
-Why is the optimal $\Delta$ larger for the Laplacian than for the gradient?
+Why is the optimal $\Delta$ larger for the Laplacian than for the gradient?\\
+{\color{darkgreen} Because there is a tradeoff between truncation error and round off error.
+The roundoff error is more severe for the Laplacian because it is a higher derivative, so one cannot go to as
+small a $\Delta$.}
 
 The form of the wavefunction above has 3 variational parameters, $\zeta, b_1, b_2$.
 However, instead of choosing all of them to minimize the energy, we will choose two of them
 to avoid having any divergences in the local energy, i.e., we will impose {\it cusp conditions}.
-What values must two of these parameters take to do this?
+What values must two of these parameters take to do this?\\
+{\color{darkgreen} $\zeta=2,\; b_1=1/2$}
 
 After having imposed the cusp conditions, there are no divergences in $\EL$.
 Is $\EL$ continuous now? \\
-Hint: Look at the last term of $\EL$ in Eq.~\ref{E_local}.
+Hint: Look at the last term of $\EL$ in Eq.~\ref{E_local}.\\
+{\color{darkgreen} Consider both electrons infinitesmally close to the nucleus.  The dot product changes
+discontinuously when say electron 1 moves from being on the same side of the nucleus as electron 2, to being
+on the opposite side.  So, imposing the cusp-condition got rid of the divergence in $\EL$ but there is
+still a discontinuity.  This discontinuity is not terribly important because it is fairly rare for both electrons
+to be very close to the nucleus.}
 }
 
 \section{Metropolis-Hastings method and Variational Monte Carlo}
@@ -280,7 +289,9 @@ Now you should have a functional VMC program.  To test for correctness, set wave
 the input to ``Slater" (or you can keep it as ``Slater-Jastrow" and just set $b_1=0$) and run
 the program for some value of $\zeta$ and check that you get the expected value.
 
-Why is the statistical error of the energy much smaller than that of its components?
+Why is the statistical error of the energy much smaller than that of its components?\\
+{\color{darkgreen} Because the energy has zero-variance when $\PsiT=\Psiz$, whereas its components
+have finite variance.}
 
 \vskip 3mm
 Once you have Metropolis-Hastings working for ``Slater" it will also work for ``Slater-Jastrow".
@@ -312,19 +323,19 @@ $e^{-\zeta(r_1+r_2)}$                                   & 1.6875 & -- & -- & -2.
 \hline
 $\Psi_{\rm HF} = \psi(r_1)\psi(r_2)$                    &  --    & -- & -- & -2.86168 & -- & -- \tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0 &         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0 & -2.85623(76) & 0.490 & 3.9\tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.1 &         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.1 & -2.87630(58) & 0.370 & 4.0 \tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.15&         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.15&  -2.87721(58)       & 0.335 & 4.8 \tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.2 &         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.2 & -2.87592(59) & 0.312 & 5.7\tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.3 &         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.3 & -2.86999(64) & 0.292 & 7.7\tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.4 &         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.4 & -2.86237(70) & 0.296 & 9.0\tabularnewline
 \hline
-$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.5 &         & & \tabularnewline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.5 & -2.85529(77) & 0.312 & 9.7 \tabularnewline
 \hline
 57-parameter wavefn                                     & 2. & 0.5 &--  &-2.903724(0)& 0.003 & 1.1 \tabularnewline
 \hline
@@ -349,11 +360,11 @@ and that $N_b$ is large enough that you have enough statistics.
 \hline
 $\tau$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
 \hline
-0.05& & & \\
-0.1 & & & \\
-0.2 & & & \\
-0.3 & & & \\
-0.4 & & & \\
+0.05& -2.87801(73) & 0.335 & 7.5\\
+0.1 & -2.87721(58) & 0.335 & 4.8\\
+0.2 & -2.87710(56) & 0.334 & 4.4\\
+0.3 & -2.87848(60) & 0.334 & 5.2\\
+0.4 & -2.87785(74) & 0.335 & 7.9\\
 \hline
 \end{tabular}\\
 \end{center}
@@ -393,9 +404,6 @@ Eq.~\ref{orbital} with $\zeta=Z$.
 \textbf{Q4. Try the better wavefunction for H$^-$:}\\ 
 Use the wavefunction in Eqs.~\ref{wavefn2}, \ref{Jastrow}, \ref{orbital2} with
 $\zeta=1, \zeta_1=1.18, \zeta_2=0.55, b_2=0.27$ to see whether it predicts a stable H$^-$ ion.
-Note that both the excited state of He, and the ground state of H$^-$ are more extended
-than the ground state of He, so the most efficient $\tau$ is larger.
-For H$^-$ you could increase $\tau$ to something like 0.6 Ha$^{-1}$.
 
 \begin{table}[H]
 \begin{center}
@@ -407,22 +415,21 @@ in Hartree units. The statistical error in the last digit of $E_{\rm VMC}$ is sh
 \hline
 wavefunction & $\zeta$ & $\zeta_2$ & $\zeta_3$ & $b_1$ & $b_2$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
 \hline
-$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.0 &         & & \tabularnewline
-$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.1 &         & & \tabularnewline
-$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.2 &         & & \tabularnewline
-$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.3 &         & & \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.0 & -0.46724(44) & 0.211 & 4.3 \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.1 & -0.49515(32) & 0.142 & 4.0 \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.2 & -0.48188(38) & 0.135 & 8.0 \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.3 & -0.46817(44) & 0.153 & 8.4 \tabularnewline
 \hline
-$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.20 &         & & \tabularnewline
-$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.25 &         & & \tabularnewline
-$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.30 &         & & \tabularnewline
-$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.35 &         & & \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.20 & -0.52516(12)& 0.055 & 4.6 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.25 & -0.526566(89))& 0.046 & 3.8 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.30 & -0.526545(88)& 0.045  & 3.8 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.35 & -0.52587(10) & 0.051  & 4.2 \tabularnewline
 \hline
 57-parameter wavefn                                     & 1. & -- &-- & 0.5 & -- & -0.527751(0)& -- & -- \tabularnewline
 \hline
 \end{tabular}\\
 \end{center}
 \end{table}
-
 }
 
 
@@ -485,10 +492,12 @@ in Hartree units. The statistical error in the last digit of $E_{\rm VMC}$ is sh
 \hline
 wavefunction & $\zeta$ & $\zeta_2$ & $\zeta_3$ & $b_1$ & $b_2$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
 \hline
-$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.30 &         & & \tabularnewline
-$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.40 &         & & \tabularnewline
-$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.50 &         & & \tabularnewline
-$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.60 &         & & \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.30 & -2.17441(10) & 0.041 & 6.2 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.40 & -2.175043(69) & 0.027 & 6.3 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.50 & -2.175067(51) & 0.022 & 5.0\tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.60 & -2.175108(46) & 0.024 & 3.8 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.80 & -2.174948(56) & 0.030 & 3.4 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&1.00 & -2.174790(70) & 0.037 & 3.6 \tabularnewline
 \hline
 24-parameter wavefn                                     & 2. & -- &-- & 0.25& -- & -2.175229(1)  & -- & -- \tabularnewline
 \hline
@@ -579,12 +588,12 @@ in Hartree units for various $\tau$. The statistical error in the last digit of 
 \hline 
 $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
 \hline 
-0.005&  &  & \tabularnewline
-0.01 &  &  & \tabularnewline
-0.02 &  &  & \tabularnewline
-0.05 &  &  & \tabularnewline
-0.1 &  &  & \tabularnewline
-0.2 &  &  & \tabularnewline
+0.005& \tabularnewline
+0.01 & \tabularnewline
+0.02 & \tabularnewline
+0.05 & \tabularnewline
+0.1 &  \tabularnewline
+0.2 &  \tabularnewline
 \hline 
 \end{tabular}\\
 \end{center}
@@ -600,11 +609,13 @@ $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ 
 \hline 
 $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
 \hline 
-0.02 &  &  & \tabularnewline
-0.05 &  &  & \tabularnewline
-0.1 &  &  & \tabularnewline
-0.2 &  &  & \tabularnewline
-0.5 &  &  & \tabularnewline
+%0.005& -0.52690(27) & 0.045 & 56.9 \tabularnewline
+%0.01 & -0.52689(26) & 0.047 & 51.0 \tabularnewline
+0.02 &  \tabularnewline
+0.05 & \tabularnewline
+0.1 & \tabularnewline
+0.2 &  \tabularnewline
+0.5 &               &       &     \tabularnewline
 \hline 
 \end{tabular}\\
 \end{center}
@@ -620,12 +631,13 @@ $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ 
 \hline 
 $\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
 \hline 
-0.01 &  &  & \tabularnewline
-0.02 &  &  & \tabularnewline
-0.05 &  &  & \tabularnewline
-0.1 &  &  & \tabularnewline
-0.2 &  &  & \tabularnewline
-0.5 &  &  & \tabularnewline
+%0.005& -2.175489(80) & 0.028 & 82.0\tabularnewline
+0.01 & \tabularnewline
+0.02 & \tabularnewline
+0.05 & \tabularnewline
+0.1 &  \tabularnewline
+0.2 &  \tabularnewline
+0.5 &  \tabularnewline
 \hline 
 \end{tabular}\\
 \end{center}

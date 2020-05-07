@@ -118,8 +118,7 @@ class Jastrow(Wavefunction):
     def drift_velocity(self,r):
         """Return the drift_velocty, grad(Jas)/Jas, at position r"""
         "XXX"
-        av = 1 #Implement averaged drift velocity term
-        return av*jas_grad
+        return jas_grad
 
     def local_laplacian(self,r):
         """Return the local laplacian, Laplacian(Jas)/Jas, at position r"""

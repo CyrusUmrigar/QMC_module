@@ -13,6 +13,11 @@ class Walker:
 
     def take_step(self, tau):
         # The * converts tuple (2 3) to 2 integers
+        diffusion = np.sqrt(tau)*np.random.randn(*self.coord.shape)
+        av = 1
+        if getattr(self.wf.wf1, "sign", 1) == -1:
+            vn = norm(self.drift_velocity)
+            av = (-1 + np.sqrt(1 + 2*vn**2*tau))/(vn**2*tau)
         "XXX - Eq. 17"
         return Walker(self.wf, proposed_coord, self.weight)
 
