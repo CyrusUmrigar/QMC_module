@@ -1,0 +1,660 @@
+%\documentclass[english]{article}
+\documentclass[11pt,aps,prb,amsmath,amssymb,superscriptaddress,notitlepage]{revtex4-1}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry,color}
+\geometry{verbose,tmargin=2.0cm,bmargin=2.1cm,lmargin=2.5cm,rmargin=2.5cm}
+\usepackage{amstext}
+\usepackage{esint}
+\usepackage{float}
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{fancyvrb} % for "\Verb" macro
+\usepackage{etoolbox} % needed for preto
+
+\topmargin -20mm
+
+\oddsidemargin -18mm
+\evensidemargin -18mm
+
+\textwidth 7.6in
+\textheight 9.0in
+
+\parindent=0mm
+\parskip=2mm
+
+\linespread{0.932}
+
+\input vmc.def
+\input dmc.def
+
+\def\beq{\begin{eqnarray}}
+\def\eeq{\end{eqnarray}}
+
+\def\Rvec{{\bf R}}
+\def\rvec{{\bf r}}
+\def\Vvec{{\bf V}}
+\def\rhat{\hat{r}}
+\def\r1vec{{\bf r}_1}
+\def\r2vec{{\bf r}_1}
+\def\r1hat{\hat{r_1}}
+\def\r2hat{\hat{r_2}}
+\def\EL{E_{\rm L}}
+\def\Tcorr{T_{\rm corr}}
+\makeatletter
+%\def\verbatim@font{\linespread{1}\normalfont\ttfamily}
+\def\verbatim@font{\linespread{1}\ttfamily}
+\preto{\@verbatim}{\topsep=0pt \partopsep=0pt }
+\makeatother
+
+\definecolor{darkgreen}{rgb}{0,0.4,0} % The smaller the number the darker it is
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\makeatother
+
+%\usepackage{babel}
+\begin{document}
+
+\title{Cornell Basic Training Lab for QMC Module:\\
+Variational and Diffusion Monte Carlo for ground and 1$^{st}$ excited state of 2-electron atom/ion}
+
+\author{Tyler Anderson and Cyrus Umrigar}
+
+\maketitle
+
+\section{Introduction}
+
+We will implement toy VMC and DMC programs in Python to calculate the $^1S$ ground states of
+He and H$^-$, and the $^3S$ first excited state of Helium.
+Of course the same program could be used for the $^1S$ and $^3S$ states of any 2-electron ion.
+VMC will give a variational upper bound for all the three states, whereas DMC will give the exact energies
+(aside from statistical error and Trotter error, both of which can be systematically reduced
+with a relatively modest increase in computer time).
+The program is a "toy" in that a) it will work only for 2-electron atoms/ions,
+b) we will use much simpler trial wavefunctions than we would in a research code for these systems,
+and c) that we will not be concerned very much about fast execution.
+Nevertheless, this program will illustrate some of the important concepts in VMC and DMC.
+
+Most of the code is already written, but some lines are missing (look for "XXX" in the code) and you
+have to provide them.
+We will build up the code in steps, testing each step as we go.
+The parts of this writeup where you have to provide answers are in {\color{blue} blue}.
+As you perform the various programming tasks, fill out the corresponding portions of this writeup.
+When you are all done, you will submit the completed writeup.
+
+For a 2-electron atom, the general Hamiltonian for a molecule
+\beq
+H=-{1 \over 2}\sum_i^{N_{\rm elec}} \nabla_{i}^{2}
+  + \sum_\alpha^{N_{nuc}} \sum_\beta^{\alpha-1} {Z_\alpha Z_\beta \over |\rvec_\alpha -\rvec_\beta|}
+  -\sum_\alpha^{N_{nuc}} \sum_i^{N_{\rm elec}} {Z_\alpha \over |\rvec_\alpha - \rvec_i|}
+  +\sum_i^{N_{\rm elec}} \sum_j^{i - 1} {1 \over |\rvec_i - \rvec_j|}
+\eeq
+reduces to
+\[
+H=-\frac{1}{2}\nabla_{1}^{2}-\frac{1}{2}\nabla_{2}^{2}-\frac{Z}{r_{1}}-\frac{Z}{r_{2}}+\frac{1}{r_{12}},
+\]
+where the nucleus is at the origin, $r_{i}=\left|\rvec_{i}\right|$ and $r_{12}=\left|\rvec_{1}-\rvec_{2}\right|$.
+
+\section{Simple ground state trial wavefunction}
+
+A frequently used ansatz for molecular wavefunctions is the multi-Slater-Jastrow form:
+%\begin{displaymath}
+\beq
+\Psi_T(\rvec_1 \cdots \rvec_n) \;=\; D \times J &=&\left(
+\sum_i^{N_{det}} d_i {\rm D}_i^\uparrow \, {\rm D}_i^\downarrow
+\right)\times \prod_{i<j,\alpha} J(r_{ij},r_{i\alpha},r_{j\alpha})
+%\end{displaymath}
+\eeq
+D$^\uparrow$ and D$^\downarrow$ are determinants of single-particle
+orbitals $\phi$ for up ($\uparrow$) and down ($\downarrow$) spin electrons respectively.
+%The single-particle orbitals $\phi$ are given by:
+%\begin{displaymath}
+%\phi({\bf r}_i)=\sum_{\alpha k_\alpha}\; {\color{darkgreen}c_{k_\alpha}}\;
+%N_{k_\alpha}r^{n_{k_\alpha}-1}_{i\alpha}\, e^{-{\color{darkgreen}\zeta_{k_\alpha}} r_{i\alpha}}
+%\,{\rm Y}_{l_{k_\alpha}m_{k_\alpha}}
+%(\widehat{\rm r}_{i\alpha})
+%\end{displaymath}
+%$
+%{\cal J}(r_i,r_j,r_{ij})=\prod_{\alpha i} \;\exp{(A_{\alpha i})}
+%\;\prod_{ij}\;\exp{(B_{ij})}
+%\;\prod_{\alpha ij}\;\exp{(C_{\alpha ij})}
+%$
+Here we use a much simplified form of the above:
+\beq
+\psi\left(\rvec_{1},\rvec_{2}\right) \;=\; D \times J
+&=& \phi(r_{1})\phi(r_{2})J(r_{12}).
+\label{wavefn}
+\eeq
+The simplifications we have made are that instead of using multiple determinants, we use just
+a single up-spin and down-spin determinant (which reduce here to just 1-body orbitals),
+and that the 3-body (e-e-n) Jastrow has been replaced by just a 2-body (e-e) Jastrow,
+\beq
+J\left(r_{12}\right) &=&\exp\left\{ \frac{b_1 r_{12}}{1+b_2 r_{12}}\right\} .
+\label{Jastrow}
+\eeq
+Further, we choose the orbitals to be just a single exponential (as is the case for the ground
+state of a hydrogenic atom), i.e.,
+\beq
+\phi\left(r_{i}\right) &=& e^{-\zeta r_{i}}.
+\label{orbital}
+\eeq
+
+Note that we do not bother with normalization factors, since they drop out when one does QMC.
+
+\beq
+D(\rvec_1,\rvec_2) &=& e^{-\zeta(r_1+r_2)} \\
+{\nabla D(\rvec_1,\rvec_2) \over D(\rvec_1,\rvec_2)} \;=\; {\nabla_1 D(\rvec_1,\rvec_2) + \nabla_2 D(\rvec_1,\rvec_2) \over D(\rvec_1,\rvec_2)}
+&=& -\zeta (\rhat_1+\rhat_2) \\
+{\nabla^2 D(\rvec_1,\rvec_2) \over D(\rvec_1,\rvec_2)} \;=\; {\nabla^2_1 D(\rvec_1,\rvec_2) + \nabla^2_2 D(\rvec_1,\rvec_2) \over D(\rvec_1,\rvec_2)}
+%&=& 2\zeta\left(\zeta -(1/r_1+1/r_2)\right)
+&=& 2\zeta\left(\zeta -\left({1 \over r_1}+{1 \over r_2}\right)\right) \\[4mm]
+J(r_{12}) &=& e^{b_1 r_{12} \over (1+b_2 r_{12})} \\
+{\nabla J(r_{12}) \over J(r_{12})} \;=\; {\nabla_1 J(\rvec_1,\rvec_2) + \nabla_2 J(\rvec_1,\rvec_2) \over J(r_{12})}
+&=& {b_1 \over (1+b_2 r_{12})^2} \rhat_{12} \\
+{\nabla^2 J(\rvec_1,\rvec_2) \over J(r_{12})} \;=\; {\nabla^2_1 J(\rvec_1,\rvec_2) + \nabla^2_2 J(\rvec_1,\rvec_2) \over J(r_{12})}
+&=& {2 b_1 \over (1+b_2 r_{12})^2} \left({2 \over r_{12}} + {b_1 \over (1+b_2 r_{12})^2} - {2 b_2 \over (1+b_2 r_{12})} \right) \\[4mm]
+\label{drift}
+\Vvec \equiv {{\bf\nabla} (D J) \over D J} &=& {{\bf \nabla} D \over D} + {{\bf \nabla} J \over J} \\
+{\nabla^2 (D J) \over D J} &=& {\nabla^2 D \over D} + {\nabla^2 J \over J}
++ 2 {{\bf\nabla} D \cdot {\bf \nabla} J \over D J}
+\eeq
+We will refer to the $3N_{\rm elec} = 6$ dimensional vector, $\Vvec$ as the drift velocity.
+
+Plugging in this wavefunction and Hamiltonian, one can show that the
+local energy is given by
+%\begin{eqnarray*}
+\beq
+E_{L}=\frac{1}{\psi}H\psi & = & -\zeta ^{2}+\left(\zeta -Z\right)\left(\frac{1}{r_{1}}+\frac{1}{r_{2}}\right)+\frac{1}{r_{12}}\left(1-\frac{2b_1}{\left(1+b_2 r_{12}\right)^{2}}\right) \nonumber \\
+ &  & +\frac{2b_1 b_2}{\left(1+b_2 r_{12}\right)^{3}}-\frac{b_1^{2}}{\left(1+b_2 r_{12}\right)^{4}}+\frac{\zeta b_1}{\left(1+b_2 r_{12}\right)^{2}}\hat{r}_{12}\cdot\left(\hat{r}_{1}-\hat{r}_{2}\right).
+\label{E_local}
+%\end{eqnarray*}
+\eeq
+
+{\color{blue}
+\textbf{Q1. Implement these two components of the wavefunction and their gradients and Laplacians in wavefunction.py:}\\
+Within wavefunction.py there are functions that test your implementation by calculating the gradients
+and Laplacians numerically, and print out the difference between the numerical evaluation and the analytic one.
+The numerical evaluation is done for different discretization steps, $\Delta$.
+It does this test for the determinantal and the Jastrow parts separately before doing the product wavefunction
+to help you debug each part separately.
+Once you think it is working, fill out the table below to show what you get for the Slater-Jastrow wavefunction.
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Check that gradient and Laplacian are consistent with the wavefunction for the Slater-Jastrow wavefunction.
+(Should do this check for each form of the wavefunction before going further.)}
+\label{gradient_laplacian}
+\begin{tabular}{|c|c|c|}
+\hline
+$\Delta$ & gradient error & Laplacian error \\
+\hline
+$1 \times 10^{-3}$ & $3.34 \times 10^{-7}$ & $1.16 \times 10^{-6}$\tabularnewline
+\hline
+$1 \times 10^{-4}$ & $3.35 \times 10^{-9}$ & $2.67 \times 10^{-8}$\tabularnewline
+\hline
+$1 \times 10^{-5}$ & $3.65 \times 10^{-11}$ & $5.81\times 10^{-6}$ \tabularnewline
+\hline
+$1 \times 10^{-6}$ & $1.59\times 10^{-10}$ & $1.31\times 10^{-3}$\tabularnewline
+\hline
+$1 \times 10^{-7}$ & $1.08\times 10^{-9}$ & $1.42\times 10^{-1}$\tabularnewline
+\hline
+$1 \times 10^{-8}$ & $1.37\times 10^{-8}$  & $8.17$\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Why is there an optimal value of $\Delta$ for both the gradient and the Laplacian?
+Why is the optimal $\Delta$ larger for the Laplacian than for the gradient?\\
+{\color{darkgreen} Because there is a tradeoff between truncation error and round off error.
+The roundoff error is more severe for the Laplacian because it is a higher derivative, so one cannot go to as
+small a $\Delta$.}
+
+The form of the wavefunction above has 3 variational parameters, $\zeta, b_1, b_2$.
+However, instead of choosing all of them to minimize the energy, we will choose two of them
+to avoid having any divergences in the local energy, i.e., we will impose {\it cusp conditions}.
+What values must two of these parameters take to do this?\\
+{\color{darkgreen} $\zeta=2,\; b_1=1/2$}
+
+After having imposed the cusp conditions, there are no divergences in $\EL$.
+Is $\EL$ continuous now? \\
+Hint: Look at the last term of $\EL$ in Eq.~\ref{E_local}.\\
+{\color{darkgreen} Consider both electrons infinitesmally close to the nucleus.  The dot product changes
+discontinuously when say electron 1 moves from being on the same side of the nucleus as electron 2, to being
+on the opposite side.  So, imposing the cusp-condition got rid of the divergence in $\EL$ but there is
+still a discontinuity.  This discontinuity is not terribly important because it is fairly rare for both electrons
+to be very close to the nucleus.}
+}
+
+\section{Metropolis-Hastings method and Variational Monte Carlo}
+
+We discussed during the lectures that one can greatly improve the sampling efficiency (reduce $\Tcorr$) by
+making a good choice for the Metropolis-Hastings proposal probability.  Here, we will not go for the
+optimal choice, which is a bit complicated to implement, but instead we will make a choice which is reasonably
+good and has the virtue that we can reuse it when we implement diffusion Monte Carlo, namely:
+\beq
+\Pfi = {1 \over (2 \pi \tau)^{3/2}} \exp\left[{-(\f - \i - \V(\Ri) \tau)^2 \over 2 \tau}\right], \;\;\; \V(\Ri) = {\nabla \PsiRi \over \PsiRi}
+\label{DMC_proposal}
+\eeq
+
+\beq
+\Afi = {\rm min}\left\{1,{\Pif\; \Psisq(\Rf) \over \Pfi\; \Psisq(\Ri)}\right\}.
+\label{acceptance}
+\eeq
+
+Given the initial position $\i$, the proposed coordinate $\f$ is chosen as:
+
+\beq
+\f = \i + \V(\i)\tau + \sqrt{\tau} N
+\label{proposed_coord}
+\eeq
+
+where $N$ is a normally distributed random variable. The second and third terms are called the drift and diffusion terms, respectively.
+
+We can check whether we have implemented this correctly by running Metropolis-Hastings on a wavefunction
+where we know the kinetic energy and potential energy analytically, e.g., the Slater part of our Slater-Jastrow
+wavefunction.  This is something that many of us did in our elementary quantum mechanics classes.
+We have
+\beq
+\label{E_kin}
+E_{\rm kin} \;=\; {\langle -{1 \over 2} (\nabla_1^2 + \nabla_2^2) D \rangle \over \langle D \rangle} &=& \zeta^2 \\
+\label{E_en}
+E_{en}  \;=\; {\langle -Z ({1 \over r_1} +{1 \over r_1}) D \rangle \over \langle D \rangle} &=& -2 Z \zeta  \\
+\label{E_ee}
+E_{ee}  \;=\; {\langle ({1 \over r_{12}} ) D \rangle \over \langle D \rangle} &=& {5 \over 8} \zeta
+\eeq
+
+So, we have
+\beq
+E(\zeta) &=& \zeta^2 -2 Z \zeta + {5 \over 8} \zeta
+\label{energy_D}
+\eeq
+which has a minimum of
+\beq
+E_{\rm min} &=& -\left(Z - {5 \over 16} \right)^2, \mbox{\hskip 3mm for \hskip 3mm} \zeta=Z-{5 \over 16}.
+\label{energy_D_min}
+\eeq
+However, to test the program, you can do whatever value of $\zeta$ you like and compare to Eqs.~\ref{E_kin},
+\ref{E_en}+\ref{E_ee}, \ref{energy_D}.
+
+{\color{blue}
+\textbf{Q2. Implement Metropolis-Hastings, try wavefunction for He and H$^-$:}\\ 
+Edit qmc.py to implement Eqs.~\ref{DMC_proposal}, \ref{acceptance}, and \ref{proposed_coord}.
+Now you should have a functional VMC program.  To test for correctness, set wavefunction\_type in
+the input to ``Slater" (or you can keep it as ``Slater-Jastrow" and just set $b_1=0$) and run
+the program for some value of $\zeta$ and check that you get the expected value.
+
+Why is the statistical error of the energy much smaller than that of its components?\\
+{\color{darkgreen} Because the energy has zero-variance when $\PsiT=\Psiz$, whereas its components
+have finite variance.}
+
+\vskip 3mm
+Once you have Metropolis-Hastings working for ``Slater" it will also work for ``Slater-Jastrow".
+So, now you can run it for various values of our one variational parameter, $b_2$ and fill out
+the blank spots in the table below.
+%You can go to the runs/He\_1S subdirectory and do the runs there with the command
+You can go to the runs:
+\begin{verbatim}
+cd runs/He_1S
+../run vmc_He*inp &
+\end{verbatim}
+So, you are doing a 1-parameter optimization by hand.  In a research-level QMC program it is a simple
+matter to optimize a wavefunction with a few dozen parameters to get an accuracy of better than
+a microHartree for such simple systems, as shown at the bottom of Table~\ref{He}.
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Variational energy, statistical error, $\sigma$, and $\Tcorr$ for various simple He atom wavefunctions
+in Hartree units. The statistical error in the last digit of $E_{\rm VMC}$ is shown in parentheses.}
+\label{He}
+\begin{tabular}{|l|c|c|c|d|c|c|}
+\hline
+wavefunction & $\zeta$ & $b_1$ & $b_2$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
+\hline
+$e^{-\zeta(r_1+r_2)}$                                   & 2      & -- & -- & -2.75 & -- &  --\tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2)}$                                   & 1.6875 & -- & -- & -2.84765 & -- & -- \tabularnewline
+\hline
+$\Psi_{\rm HF} = \psi(r_1)\psi(r_2)$                    &  --    & -- & -- & -2.86168 & -- & -- \tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0 & -2.85623(76) & 0.490 & 3.9\tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.1 & -2.87630(58) & 0.370 & 4.0 \tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.15&  -2.87721(58)       & 0.335 & 4.8 \tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.2 & -2.87592(59) & 0.312 & 5.7\tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.3 & -2.86999(64) & 0.292 & 7.7\tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.4 & -2.86237(70) & 0.296 & 9.0\tabularnewline
+\hline
+$e^{-\zeta(r_1+r_2) + \frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 0.5 &0.5 & -2.85529(77) & 0.312 & 9.7 \tabularnewline
+\hline
+57-parameter wavefn                                     & 2. & 0.5 &--  &-2.903724(0)& 0.003 & 1.1 \tabularnewline
+\hline
+\end{tabular}\\
+\end{center}
+\end{table}
+
+What is the value of $b_2$ (to 2 digit precision) that minimized the energy?\\
+Is the statistical error minimum (for a given \# of MC steps) also minimized for about the same value?\\
+What about $\sigma$ and $\Tcorr$?
+
+Once you have a near optimal value of $b_2$, find a near-optimal value of the time-step $\tau$, by
+filling out the following table.  Use the same values of $N_s$ and $N_b$ for all the $\tau$, but
+make sure that $N_s$ is large enough that you are not significantly underestimating $\Tcorr$
+and that $N_b$ is large enough that you have enough statistics.
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Test for near-optimal $\tau$.}
+\label{vmc_tau}
+\begin{tabular}{|l|d|c|c|}
+\hline
+$\tau$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
+\hline
+0.05& -2.87801(73) & 0.335 & 7.5\\
+0.1 & -2.87721(58) & 0.335 & 4.8\\
+0.2 & -2.87710(56) & 0.334 & 4.4\\
+0.3 & -2.87848(60) & 0.334 & 5.2\\
+0.4 & -2.87785(74) & 0.335 & 7.9\\
+\hline
+\end{tabular}\\
+\end{center}
+\end{table}
+
+}
+
+\subsection{Similar wavefunction for H$^-$}
+The above wavefunction (with $\zeta$ changed appropriately of course) gives reasonable energies for 2-electron positive ions, Li$^+$, Be$^{2+}, \cdots$.
+The negative ion, H$^-$ ion is stable, i.e., it has a lower energy than H, but it is a bit
+more challenging than the positive ions.
+
+{\color{blue}
+\textbf{Q3. Does the above wavefunction predict a stable H$^-$ ion?}\\
+Fill out the top 4 lines of Table~\ref{H-}.
+}
+
+\subsection{Better wavefunction for H$^-$}
+The H$^-$ ion is much more extended than a H or a He atom, and it has a lot of in-out correlation,
+i.e., much of the time one electron is close to the nucleus and the other electron is far away.
+So, we can improve upon our wavefunction by having one orbital that is compact and another that
+is more extended,  We replace Eqs.~\ref{wavefn} and \ref{orbital} by
+\beq
+\psi\left(\rvec_{1},\rvec_{2}\right) \;=\; D \times J
+&=& \big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2}) \big)J\left(r_{12}\right).
+\label{wavefn2}
+\eeq
+where $\phi$ is the same as before and $\phi_2$ is
+\beq
+\phi_2\left(r\right) &=& e^{-\zeta_1 r} + (\zeta_1-Z) r e^{-\zeta_2 r}.
+\label{orbital2}
+\eeq
+Note that we have chosen a form for $\phi_2(r)$ that satisfies the cusp condition, as does $\phi(r)$ in
+Eq.~\ref{orbital} with $\zeta=Z$.
+
+{\color{blue}
+\textbf{Q4. Try the better wavefunction for H$^-$:}\\ 
+Use the wavefunction in Eqs.~\ref{wavefn2}, \ref{Jastrow}, \ref{orbital2} with
+$\zeta=1, \zeta_1=1.18, \zeta_2=0.55, b_2=0.27$ to see whether it predicts a stable H$^-$ ion.
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Variational energy, statistical error, $\sigma$, and $\Tcorr$ for various simple H$^-$ ion wavefunctions
+in Hartree units. The statistical error in the last digit of $E_{\rm VMC}$ is shown in parentheses.}
+\label{H-}
+\begin{tabular}{|l|c|c|c|c|c|d|c|c|}
+\hline
+wavefunction & $\zeta$ & $\zeta_2$ & $\zeta_3$ & $b_1$ & $b_2$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
+\hline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.0 & -0.46724(44) & 0.211 & 4.3 \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.1 & -0.49515(32) & 0.142 & 4.0 \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.2 & -0.48188(38) & 0.135 & 8.0 \tabularnewline
+$\phi(r_{1})\phi(r_{2}) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & -- & -- & 0.5 &0.3 & -0.46817(44) & 0.153 & 8.4 \tabularnewline
+\hline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.20 & -0.52516(12)& 0.055 & 4.6 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.25 & -0.526566(89))& 0.046 & 3.8 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.30 & -0.526545(88)& 0.045  & 3.8 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) + \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 1. & 1.18 & 0.55 & 0.5 &0.35 & -0.52587(10) & 0.051  & 4.2 \tabularnewline
+\hline
+57-parameter wavefn                                     & 1. & -- &-- & 0.5 & -- & -0.527751(0)& -- & -- \tabularnewline
+\hline
+\end{tabular}\\
+\end{center}
+\end{table}
+}
+
+\subsection{1$^{st}$ excited state of He}
+The first excited state of He has $^3$S symmetry.
+So, now both electrons are spin up, and instead of just taking a product of the orbitals we
+must form a determinant from the orbitals.
+Other than that we can use the same form of the orbitals we had above, except for one other small detail.
+For parallel-spin electrons in 3D, the cusp in the wavefunction is $1/4$ rather than $1/2$,
+so use $b_1=0.25$.  However, since parallel-spin electrons never get very close it does not really
+matter very much if you forget to do this.
+So, the wavefunction is
+\beq
+\psi\left(\rvec_{1},\rvec_{2}\right) &=& \left|\begin{array}{cc}
+%\phi_{1}\left(r_{1}\right) & \phi_{1}\left(r_{2}\right)\\
+%\phi_{2}\left(r_{1}\right) & \phi_{2}\left(r_{2}\right)
+\phi\left(r_1\right) & \phi\left(r_{2}\right)\\
+\phi_{2}\left(r_1\right) & \phi_{2}\left(r_{2}\right)
+\end{array}\right|
+\exp\left\{ \frac{b_1 r_{12}}{1+b_2 r_{12}}\right\}.
+\label{Slater_Jastrow}
+\eeq
+There is one other thing we need to take care of for any system where the wavefunction has nodes.
+The drift velocity, $\Vvec$, in Eq.~\ref{drift} diverges at nodes.  So, on the rare occasions when
+a walker lands very close to a node, the drift shoots it out a very long distance, and since the
+probability of the reverse Metropolis-Hastings move is small, the forward move has a low probability
+of being accepted.  This is a problem even in VMC, but becomes a more serious problem in DMC
+because the local energy diverges to $+\infty$ on one side of the node and to $-\infty$ on the
+other side.  On the $-\infty$ side one can get a multiplicity of walkers that stay stuck there.
+This problem is easily taken care of by thinking in terms of doing a crude average of the
+velocity over the time-step $\tau$.
+Near a node, make a linear approximation for $\Psi$, in which case $V=1/r$ where
+$r = \Psi / |\Grad \Psi|$ is the estimated distance to the node.
+In that case
+\beq
+{\diff r \over \diff t} &=& {1 \over r} \nonumber \\
+{r^2(\tau)-r^2(0) \over 2} &=& \tau \nonumber \\
+r &=& \sqrt{(r^2(0)+2\tau)} \nonumber \\
+\label{Vbar_tau}
+\bar{V} \tau &=& {r(\tau)-r(0) \over \tau}  = {\sqrt{(r^2(0)+2\tau)} - r(0) \over \tau} \nonumber \\
+\bar{V} &=& {-1 + \sqrt{1+2V^2\tau} \over V \tau} \nonumber \\
+\bar{\Vvec} &=& {-1 + \sqrt{1+2V^2\tau} \over V^2 \tau} \Vvec
+\label{Vbar}
+\eeq
+In the limit of small $\tau$ we recover $\bar{\Vvec} = \Vvec$.
+
+
+{\color{blue}
+\textbf{Q5. Try this wavefunction for $^3$S state of He:}\\ 
+Use the wavefunction in Eq.~\ref{Slater_Jastrow}, with
+$\zeta=2, \zeta_1=1.48, \zeta_2=0.62$, and various $b_2$ to compute the energy of the $^3$S state of He.
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Variational energy, statistical error, $\sigma$, and $\Tcorr$ for the $^3$S first excited state of He atom using the wavefunction in Eq.~\ref{Slater_Jastrow}
+in Hartree units. The statistical error in the last digit of $E_{\rm VMC}$ is shown in parentheses.}
+\label{He_ex}
+\begin{tabular}{|l|c|c|c|c|c|d|c|c|}
+\hline
+wavefunction & $\zeta$ & $\zeta_2$ & $\zeta_3$ & $b_1$ & $b_2$ & \multicolumn{1}{c}{$E_{\rm vmc}$ (stat error)}| & $\sigma$ & $\Tcorr$ \\
+\hline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.30 & -2.17441(10) & 0.041 & 6.2 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.40 & -2.175043(69) & 0.027 & 6.3 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.50 & -2.175067(51) & 0.022 & 5.0\tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.60 & -2.175108(46) & 0.024 & 3.8 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&0.80 & -2.174948(56) & 0.030 & 3.4 \tabularnewline
+$\big(\phi(r_{1})\phi_2(r_{2}) - \phi_2(r_{1})\phi(r_{2})\big) e^{\frac{b_1 r_{12}}{1+b_2 r_{12}}}$ & 2. & 1.48 & 0.62 & 0.25&1.00 & -2.174790(70) & 0.037 & 3.6 \tabularnewline
+\hline
+24-parameter wavefn                                     & 2. & -- &-- & 0.25& -- & -2.175229(1)  & -- & -- \tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+}
+
+\section{Diffusion Monte Carlo}
+So far we have used VMC to calculate variational upper bounds for the ground states of He and H$^-$, and for the first excited state
+of He.  The energies were accurate to 2, 3, and 4 digits for these 3 systems, respectively.
+
+We will now use DMC to calculate the ``exact" energies of these states.  By ``exact" we mean exact aside
+for statistical error and time-step (Trotterization) error, since both of these errors can be made systematically
+smaller by using more computer time.  The statistical error goes down as the inverse square root of the computer time
+and the Trotterization error goes down at least as the inverse of the computer time (by using smaller $\tau$).
+
+{\color{blue}
+\textbf{Q6. Explain why all the 3 states we calculate have no fixed-node error:}\\
+
+}
+
+We chose the Metropolis-Hastings proposal probability to be the norm-conserving part of the DMC propagator
+so that it could do double duty in VMC and DMC.  So, now what remains to be done is to edit the
+\Verb"reweight" function in \Verb"qmc.py" to multiply the
+weights of the walkers at each step by
+\beq
+w &=& e^{\tau\big(\ET-0.5(\EL(\Rvec_{\rm old}) + \EL(\Rvec_{\rm new}))\big)}
+\label{rewt}
+\eeq
+where $\ET$ is an estimate of the energy, discussed in ingredient 3 below.
+
+In VMC, the Markov proposal probability is normalized, whereas in PMC methods, such as DMC, the projector is not.
+This necessitates the following 4 small additional ingredients in PMC methods:
+\begin{enumerate}
+\item {\bf Weights:} The walkers carry weights which change from generation to generation.
+
+\item {\bf Walker population and branching (birth/death):} If we have just a single walker its weight
+would do a random walk and the contributions of a small fraction of the generations of the walk would dominate, even though the
+computer time spent on each generation is the same.  So, we get around this by having a population
+of walkers, and employ a {\it branching} algorithm to keep the weights of the walkers either exactly or approximately
+the same.  There are three branching algorithms that are commonly used -- {\it integerize, split-join}
+and {\it stochastic reconfiguration}.  The latter two are preferred a bit because they avoid unnecessary
+fluctuations, but the difference in their performance is not big.
+
+\item {\bf Population control:} By having a walker population and a branching algorithm, we make the weights
+of the walkers of a given generation approximately the same.  However, the total weights of a generation may
+vary greatly between generations.  Hence we need to exercise {\it population control}.
+One way to do this is to define
+\beq
+\ET &=& \Eest + {\log(W_{\rm target}/W_{\rm gen}) \over N_{\rm gen}}
+\label{popcontrol}
+\eeq
+where $\Eest$ is the best current estimator for the energy, $W_{\rm target}$ is the target weight of a generation,
+$W_{\rm gen}$ is the weight of the current generation, and $N_{\rm gen}$ controls the strength of the population
+control.  Roughly, $N_{\rm gen}$ is the average number of generations after which the population tends to
+return to its target value.
+Larger values of $N_{\rm gen}$ results in a smaller population control bias coming from smaller fluctuations in $\ET$ but only modestly larger fluctuations in $W_{\rm gen}$.
+Reasonable choices for $N_{\rm gen}$ are say 10 or 100 or $1/\tau$ -- it does not matter very much. 
+
+\item {\bf Correct for population control error:}  Having a fluctuating, rather than a constant $\ET$ results
+in a small positive population control bias, because fluctuations in $W_{\rm gen}$ are correlated with fluctuations
+in the average energy of the generation and therefore with $\ET$.  It is straightforward to correct for this bias (see the pedagogic article)
+and there is no reason not to do that.
+However, most practitioners, simply rely on using a large enough population to make the error negligible
+since it scales as $1/W_{\rm target}$.  For the accuracy we care about in this lab, we will not bother with
+implementing the correction for the population control bias.
+\end{enumerate}
+
+
+{\color{blue}
+\textbf{Q7. DMC energies for $^1$S states of He and H$^-$ and $^3$S states of He:}\\
+Implement Eqs.~\ref{rewt} and \ref{popcontrol} in qmc.py.
+Then calculate the DMC energies for $^1$S states of He and H$^-$ and $^3$S states of He to fill out the
+tables below.  We do each of these for a few values of $\tau$ to make sure that the time-step error is
+negligible compared to the desired accuracy and to extrapolate to $\tau=0$ if necessary.
+Make sure that $N_s$ is large enough that you are not significantly underestimating $\Tcorr$
+and that $N_b$ is large enough that you have enough statistics.
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{DMC energy, statistical error, $\sigma$, and $\Tcorr$ for various simple He atom wavefunction
+in Hartree units for various $\tau$. The statistical error in the last digit of $E_{\rm VMC}$ is shown in parentheses.}
+\label{He_DMC}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+$\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
+\hline 
+0.005& -2.9010(21) & 0.338 & 75.4 \tabularnewline
+0.01 & -2.9025(17) & 0.337 & 51.3 \tabularnewline
+0.02 & -2.9019(13) & 0.337 & 29.4 \tabularnewline
+0.05 & -2.90127(74) & 0.337 & 9.5 \tabularnewline
+0.1  & -2.90215(70) & 0.338 & 8.6 \tabularnewline
+0.15 & -2.90238(58) & 0.338 & 5.9 \tabularnewline
+0.2  & -2.90203(45) & 0.338 & 3.6 \tabularnewline
+0.25 & -2.90367(48) & 0.338 & 4.0 \tabularnewline
+0.30 & -2.90569(50) & 0.339 & 4.3 \tabularnewline
+0.40 & -2.90958(54) & 0.339 & 5.0 \tabularnewline
+\hline 
+\end{tabular}\\
+\end{center}
+\end{table}
+
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Same as Table~\ref{He_DMC} but for the H$^-$ ion using the wavefunction in Eq.~\ref{wavefn2}}
+\label{H-_DMC}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+$\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
+\hline 
+%0.005& -0.52690(27) & 0.045 & 56.9 \tabularnewline
+%0.01 & -0.52689(26) & 0.047 & 51.0 \tabularnewline
+0.02 & -0.52827(26)  & 0.046 & 65.9 \tabularnewline
+0.05 & -0.52761(17)  & 0.046 & 29.0 \tabularnewline
+0.1  & -0.52775(12)  & 0.046 & 12.8 \tabularnewline
+0.2  & -0.527682(99) & 0.046 & 9.2 \tabularnewline
+0.4  & -0.527863(73) & 0.046 & 5.0 \tabularnewline
+0.5  & -0.527873(73) & 0.046 & 5.0 \tabularnewline
+0.6  & -0.528024(65) & 0.046 & 4.0 \tabularnewline
+1.0  & -0.528162(82) & 0.047 & 6.2 \tabularnewline
+\hline 
+\end{tabular}\\
+\end{center}
+\end{table}
+
+
+\begin{table}[H]
+\begin{center}
+\color{blue}
+\caption{Same as Table~\ref{He_DMC} but for the $^3$S state of He using the wavefunction in Eq.~\ref{Slater_Jastrow}}
+\label{H-_DMC}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+$\tau$ & \multicolumn{1}{c}{$E_{\rm dmc}$ (stat error)} | & $\sigma$ & $\Tcorr$ \tabularnewline
+\hline 
+%0.005& -2.175489(80) & 0.028 & 82.0\tabularnewline
+0.01 & -2.17516(13) & 0.024 & 57.5 \tabularnewline
+0.02 & -2.175071(98) & 0.024 & 34.6 \tabularnewline
+0.05 & -2.175205(61) & 0.024 & 13.1 \tabularnewline
+0.1 &  -2.175168(46) & 0.024 & 7.7 \tabularnewline
+0.15 & -2.175255(40) & 0.024 & 5.6 \tabularnewline
+0.2 & -2.175237(43) & 0.023 & 6.8 \tabularnewline
+0.3 & -2.175209(36) & 0.024 & 4.7 \tabularnewline
+0.4 & -2.175272(34) & 0.023 & 4.2 \tabularnewline
+0.5 & -2.175211(46) & 0.023 & 8.0  \tabularnewline
+0.6 & -2.175338(48) & 0.023 & 8.2 \tabularnewline
+\hline 
+\end{tabular}\\
+\end{center}
+\end{table}
+
+How close do you get to the highly accurate values given in the VMC tables?
+
+}
+
+\end{document}
