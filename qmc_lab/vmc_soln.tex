@@ -169,7 +169,7 @@ local energy is given by
 %\begin{eqnarray*}
 \beq
 E_{L}=\frac{1}{\psi}H\psi & = & -\zeta ^{2}+\left(\zeta -Z\right)\left(\frac{1}{r_{1}}+\frac{1}{r_{2}}\right)+\frac{1}{r_{12}}\left(1-\frac{2b_1}{\left(1+b_2 r_{12}\right)^{2}}\right) \nonumber \\
- &  & +\frac{2b_1 b_2}{\left(1+b_2 r_{12}\right)^{3}}-\frac{b_1^{2}}{\left(1+b_2 r_{12}\right)^{4}}+\frac{\zeta b_1}{\left(1+b_2 r_{12}\right)^{2}}\hat{r}_{12}\cdot\left(\hat{r}_{1}-\hat{r}_{2}\right).
+ &  & +\frac{2b_1 b_2}{\left(1+b_2 r_{12}\right)^{3}}-\frac{b_1^{2}}{\left(1+b_2 r_{12}\right)^{4}}+\frac{\zeta b_1}{\left(1+b_2 r_{12}\right)^{2}}\hat{r}_{12}\cdot\left(\hat{r}_{1}+\hat{r}_{2}\right).
 \label{E_local}
 %\end{eqnarray*}
 \eeq
@@ -225,9 +225,9 @@ After having imposed the cusp conditions, there are no divergences in $\EL$.
 Is $\EL$ continuous now? \\
 Hint: Look at the last term of $\EL$ in Eq.~\ref{E_local}.\\
 {\color{darkgreen} Consider both electrons infinitesmally close to the nucleus.  The dot product changes
-discontinuously when say electron 1 moves from being on the same side of the nucleus as electron 2, to being
+discontinuously from 2 to 0 when say electron 1 moves from being on the same side of the nucleus as electron 2, to being
 on the opposite side.  So, imposing the cusp-condition got rid of the divergence in $\EL$ but there is
-still a discontinuity.  This discontinuity is not terribly important because it is fairly rare for both electrons
+still a discontinuity of magnitude $2 \zeta b_1$.  This discontinuity is not terribly important because it is fairly rare for both electrons
 to be very close to the nucleus.}
 }
 
