@@ -516,9 +516,11 @@ smaller by using more computer time.  The statistical error goes down as the inv
 and the Trotterization error goes down at least as the inverse of the computer time (by using smaller $\tau$).
 
 {\color{blue}
-\textbf{Q6. Explain why all the 3 states we calculate have no fixed-node error:}\\
-
-}
+\textbf{Q6. Explain why all the 3 states we calculate have no fixed-node error:}}\\
+{\color{darkgreen} The first 2 states are nodeless.  The excited state has nodes, but the symmetry arguments
+in the lecture, namely that $\Psi \to \Psi$ under rotation, and $\Psi \to -\Psi$ under exchange, show that this
+simple wavefunction has exactly the correct nodal surface, namely $r_1 = r_2$, so there is no fixed-node error.
+This is one of the few systems for which the nodal surface is known.}
 
 We chose the Metropolis-Hastings proposal probability to be the norm-conserving part of the DMC propagator
 so that it could do double duty in VMC and DMC.  So, now what remains to be done is to edit the
